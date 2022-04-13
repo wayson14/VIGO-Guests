@@ -15,8 +15,11 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
+from interfaces import views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('guest/', views.guest),
+    path('reception/', views.reception),
     path('__debug__/', include('debug_toolbar.urls')),
 ]
