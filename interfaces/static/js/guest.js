@@ -1,4 +1,5 @@
 window.onload = start;
+const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
 
 function start()
 {
@@ -8,37 +9,63 @@ function start()
 
 async function upload_data(form)
 {
-    let firstname = form.querySelector("[name='firstname']");
-    let lastname = form.querySelector("[name='lastname']");
-    let keeper = form.querySelector("[name='keeper']");
-    let brand = form.querySelector("[name='brand']");
-    
-    if(!validate(firstname, lastname, keeper)) return false;
+    const guest_full_name = form.querySelector("[name='guest_full_name']");
+    const lastname = form.querySelector("[name='lastname']");
+    const keeper_full_name = form.querySelector("[name='keeper_full_name']");
+    const company = form.querySelector("[name='company']");
+    let output
+    if(!validate(guest_full_name, lastname, keeper_full_name, company)) return false;
 
-    let endpoint = "add_possible_guest.py";
-    let formData = new FormData();
-    formData.append("firstname", firstname.value);
-    formData.append("lastname", lastname.value);
-    formData.append("keeper", keeper.value);
-    formData.append("brand", brand.value);
+    const endpoint = "/api/guest_entries";
+    const formData = new FormData();
+    formData.append("guest_full_name", guest_full_name.value);
+    // formData.append("lastname", lastname.value);
+    formData.append("keeper_full_name", keeper_full_name.value);
+    formData.append("company", company.value);
     console.log(formData);
-    response = await fetch(endpoint, {method:"post", body: formData}).catch(console.error);
-    $("#output").html(response.json());
+    const response = await fetch(endpoint,
+         {
+            method: "post",
+            body: formData,
+            headers: {'X-CSRFToken': csrftoken},
+            mode: 'same-origin',
+        }
+        ).catch(console.error);
+    const data = await response.json()
+    if (response.ok){
+        $( "#output" ).css({"color":"green"})
+        output = "Pomyślnie zarejestrowano wizytę. Poczekaj na wydanie identyfikatora..."
+        $( "#output" ).text(output);
+    }
+    else{
+        $( "#output" ).css({"color":"red"})
+        if (response.status == 403){
+            $( "#output" ).text(`403 Nieautoryzowany - spróbuj się ponownie zalogować do interfejsu gościa.`);
+        }
+        $( "#output" ).text(`Wystąpił nieznany błąd. Skontaktuj się z administratorami.`);
+    }
+    setTimeout(() => {
+        guest_full_name.value = '',
+        keeper_full_name.value = '',
+        lastname.value = '',
+        company.value = ''
+        $( "#output" ).text('');
+    }, 5000)
 }
 
-function validate(firstname, lastname, keeper)
+function validate(guest_full_name, lastname, keeper_full_name, company)
 {
     let ok = true;
-    if(firstname.value == "")
+    if(guest_full_name.value == "")
     {
-        firstname.placeholder = "Imię jest wymagane";
-        firstname.className = "invaild";
+        guest_full_name.placeholder = "Imię jest wymagane";
+        guest_full_name.className = "invaild";
         ok = false;
     }
     else
     {
-        firstname.placeholder = "Imię";
-        firstname.className = "";
+        guest_full_name.placeholder = "Imię";
+        guest_full_name.className = "";
     }
     if(lastname.value == "")
     {
@@ -51,16 +78,27 @@ function validate(firstname, lastname, keeper)
         lastname.placeholder = "Nazwisko";
         lastname.className = "";
     }
-    if(keeper.value == "")
+    if(keeper_full_name.value == "")
     {
-        keeper.placeholder = "Opiekun jest wymagany";
-        keeper.className = "invaild";
+        keeper_full_name.placeholder = "Opiekun jest wymagany";
+        keeper_full_name.className = "invaild";
         ok = false;
     }
     else
     {
-        keeper.placeholder = "Opiekun";
-        keeper.className = "";
+        keeper_full_name.placeholder = "Opiekun";
+        keeper_full_name.className = "";
+    }
+    if(company.value == "")
+    {
+        company.placeholder = "Frima jest wymagana";
+        company.className = "invaild";
+        ok = false;
+    }
+    else
+    {
+        company.placeholder = "Firma";
+        company.className = "";
     }
     if(!ok) return false;
     return true;

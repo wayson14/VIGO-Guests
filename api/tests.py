@@ -84,6 +84,7 @@ class GuestEntryTestCaseAPI(APITestCase):
             "guest_full_name": "Jan Sposób",
             "keeper_full_name": "Adam Sposób",
             "notes": "Testowe notatki",
+            "company": "VIGO",
             "card": 1
         }
         self.id_data = {
@@ -113,13 +114,9 @@ class GuestEntryTestCaseAPI(APITestCase):
             "keeper_full_name": "Adam Sposób",
             "notes": "Gość okazał się bardzo gburowaty i szorstki w obyciu.",
             "card": 10 #occupied card number
-        },
-        {
-            "id": 10,
-            "guest_full_name": "Jan Sposób",
-            "keeper_full_name": "Adam Sposób",
+        }
+        ]
         
-        }]
 
         self.bad_data = [
         {
@@ -138,11 +135,6 @@ class GuestEntryTestCaseAPI(APITestCase):
             "keeper_full_name": "Arkadiusz Szydlik",
             "notes": "Testowe notatki",
             "card": 5
-        },
-        {
-            "guest_full_name": "Szymon Sposób",
-            "keeper_full_name": "Arkadiusz Szydlik",
-            "notes": "Testowe notatki",
         },
         {
             "guest_full_name": "Jan Sposób II",

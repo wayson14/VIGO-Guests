@@ -57,15 +57,23 @@ class GuestEntryView(APIView):
             'keeper_full_name': request.data.get('keeper_full_name'),
             'notes': request.data.get('notes'),
             'card': request.data.get('card'),
+            'company': request.data.get('company'),
+            'enter_datetime': request.data.get('enter_datetime'),
+            'exit_datetime': request.data.get('exit_datetime')
         }
         serializer = GuestEntrySerializer(data=data)
         if serializer.is_valid():
-            card = Card.objects.get(pk = request.data.get('card'))
-            if not card.is_given:
+            try:
+                card = Card.objects.get(pk = request.data.get('card'))
+            except Card.DoesNotExist:
                 serializer.save()
                 return Response(serializer.data, status=status.HTTP_201_CREATED)
             else:
-                return Response(f'Card of id {card.id} is already given.', status=status.HTTP_400_BAD_REQUEST)
+                if not card.is_given:
+                    serializer.save()
+                    return Response(serializer.data, status=status.HTTP_201_CREATED)
+                else:
+                    return Response(f'Card of id {card.id} is already given.', status=status.HTTP_400_BAD_REQUEST)
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -165,18 +173,23 @@ class GuestEntryDetailView(APIView):
             'keeper_full_name': request.data.get('keeper_full_name'),
             'notes': request.data.get('notes'),
             'card': request.data.get('card'),
+            'company': request.data.get('company'),
+            'enter_datetime': request.data.get('enter_datetime'),
+            'exit_datetime': request.data.get('exit_datetime')
         }
         serializer = GuestEntrySerializer(instance = guest_entry, data=data, partial = True)
         if serializer.is_valid():
-            card = Card.objects.get(pk = request.data.get('card'))
-            if not card.is_given:
+            try:
+                card = Card.objects.get(pk = request.data.get('card'))
+            except Card.DoesNotExist:
                 serializer.save()
                 return Response(serializer.data, status=status.HTTP_201_CREATED)
             else:
-                return Response(f'Card of id {card.id} is already given.', status=status.HTTP_400_BAD_REQUEST)
-
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
+                if not card.is_given:
+                    serializer.save()
+                    return Response(serializer.data, status=status.HTTP_201_CREATED)
+                else:
+                    return Response(f'Card of id {card.id} is already given.', status=status.HTTP_400_BAD_REQUEST)
     # 5. Delete
     def delete(self, request, guest_entry_id, *args, **kwargs):
         '''

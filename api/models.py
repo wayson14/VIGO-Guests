@@ -7,9 +7,10 @@ class Card(models.Model):
 
 class GuestEntry(models.Model):
     guest_full_name = models.CharField(max_length=100, blank=False)
+    company         = models.CharField(max_length=100, null=True)
     enter_datetime  = models.DateTimeField(auto_now_add=True)
     exit_datetime   = models.DateTimeField(null=True)
     keeper_full_name= models.CharField(max_length=100, blank=False)
-    notes           = models.CharField(max_length=1000, blank=True)
-    card            = models.ForeignKey(Card, null=False, on_delete=models.DO_NOTHING)
-
+    notes           = models.CharField(max_length=1000, null=True, blank=True)
+    card            = models.ForeignKey(Card, null=True, on_delete=models.DO_NOTHING)
+    
