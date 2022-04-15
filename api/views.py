@@ -69,8 +69,62 @@ class GuestEntryView(APIView):
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-class GuestEntryDetailView(LoginRequiredMixin, APIView):
-    # permission_classes = [permissions.IsAuthenticated]
+class CardDetailView(LoginRequiredMixin, APIView):
+    def get_object(self, card_id):
+        '''
+        Helper method to get the object with given card_id
+        '''
+        try:
+            return Card.objects.get(id=card_id)
+        except Card.DoesNotExist:
+            return None
+            
+    def get(self, request, card_id):
+        card = self.get_object(card_id)
+        if not card:
+            return Response(
+                {"res": "Object with card_id does not exist"},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        serializer = CardSerializer(card)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    def put(self, request, card_id):
+  
+        card = self.get_object(card_id)
+        if not card:
+            return Response(
+                {"res": "Object with card_id does not exists"}, 
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        data = {
+            'id': request.data.get('id'),
+            'is_given': request.data.get('is_given'),
+        }
+        serializer = CardSerializer(instance = card, data=data, partial = True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+    
+    def delete(self, request, card_id):
+        card = self.get_object(card_id)
+        if not card:
+            return Response(
+                {"res": "Object with card_id does not exists"}, 
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        card.delete()
+        return Response(
+            {"res": "Object deleted!"},
+            status=status.HTTP_200_OK
+        )
+
+class GuestEntryDetailView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
     def get_object(self, guest_entry_id):
         '''
         Helper method to get the object with given guest_entry
@@ -81,7 +135,7 @@ class GuestEntryDetailView(LoginRequiredMixin, APIView):
             return None
 
     # 3. Retrieve
-    def get(self, request, guest_entry_id, *args, **kwargs):
+    def get(self, request, guest_entry_id):
         '''
         Retrieves the Todo with given guest_entry
         '''
@@ -139,3 +193,4 @@ class GuestEntryDetailView(LoginRequiredMixin, APIView):
             {"res": "Object deleted!"},
             status=status.HTTP_200_OK
         )
+

@@ -1,5 +1,5 @@
 from urllib import response
-from django.test import TestCase, Client
+from django.test import TestCase, Client, tag
 from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APITestCase, APIClient
@@ -184,4 +184,59 @@ class GuestEntryTestCaseAPI(APITestCase):
         response = self.client.delete("/api/guest_entries/1/")
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
+class CardTestCaseAPI(APITestCase):
+    
+    def setUp(self):
+        self.client = APIClient()
+        user = User.objects.create(username='testuser')
+        user.set_password('qazwsx')
+        user.save()
+        self.logged_in = self.client.login(username='testuser', password='qazwsx')
+        self.good_data = [
+            {
+                'id': 1,
+                'is_given': 'False'
+            },
+            {
+                'id': 10,
+                'is_given': 'True'
+            }
+        ]
+        self.bad_data = [
+            {
+                'id': 'asdf',
+                'is_given': 'False'
+            },
+            {
+                'is_given': 'True'
+            },
+            {
+                'id': 6,
+                'is_given': 'asdf'
+            },
+        ]
+    def test_creation(self):
+        for data in self.good_data:
+            response = self.client.post('/api/cards', data)
+            self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+    
+    def test_getting(self):
+        self.client.post('/api/cards', self.good_data[0])
+        response = self.client.get('/api/cards/1/')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
 
+    
+    def test_putting(self):
+        self.client.post('/api/cards', self.good_data[0])
+        response = self.client.put('/api/cards/1/', self.good_data[1])
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
+        for data in self.bad_data:
+            response = self.client.put('/api/cards/1/', data)
+            self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+    @tag('wip')
+    def test_deleting(self):
+        self.client.post('/api/cards', self.good_data[0])
+        response = self.client.delete('/api/cards/1/')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
