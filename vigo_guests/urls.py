@@ -16,10 +16,13 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from interfaces import views
+from api import urls as api_urls
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('guest/', views.guest),
     path('reception/', views.reception),
+    path('api/', include(api_urls)),
+    path('api-auth/', include('rest_framework.urls')),
     path('__debug__/', include('debug_toolbar.urls')),
 ]
