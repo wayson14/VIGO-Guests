@@ -45,6 +45,11 @@ body
     padding-top: 100px;
 }
 
+#awaiting
+{
+    min-height: 150px;
+}
+
 #add-form
 {
     margin-top: 50px;
@@ -144,6 +149,7 @@ body
 
 .entry select
 {
+    font: inherit;
     appearance: none;
     padding: 0.25em 0.5em;
     margin: 0;
@@ -156,6 +162,8 @@ body
     background-color: var(--e-global-color-accent);
     border-radius: 0.5em;
     height: 2em;
+    color: var(--e-global-color-primary);
+    font-weight: bold;
 }
 
 .entry select:target
@@ -170,8 +178,11 @@ body
     border-bottom-right-radius: 0;
 }
 
-.select::after
+select::after
 {
+    position: absolute;
+    top: 0;
+    left: 0;
     content: "";
     width: 0.8em;
     height: 0.5em;
@@ -210,11 +221,6 @@ body
 {
     background-color: var(--e-global-color-accent);
     transform: scale(0.9);
-}
-
-.active-entry
-{
-
 }
 
 footer

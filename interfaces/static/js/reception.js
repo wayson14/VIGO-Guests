@@ -1,20 +1,16 @@
 window.onload = start;
 const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+var avalible_cards = [];
+
+String.prototype.htmlEntities = function()
+{
+    return this.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+}
 
 function start()
 {
     console.log("działa");
-    test = {
-        "id": 456,
-        "guest_first_name": "Mateusz",
-        "guest_last_name": "Ogniewski",
-        "keeper_full_name": "Arkadiusz Szydlik",
-        "company": "VIGO photonics",
-        "card": 34,
-        "cards": [1,2,3,4,5,6,7,8,9,45,34]
-    };
-    $("#awaiting").html(new_awaiting_entry(test));
-    //refresh();
+    refresh();
 }
 
 function auto_refresh()
@@ -27,17 +23,24 @@ function auto_refresh()
 
 function refresh()
 {
-    load_awaitings();
-    load_active();
+    setTimeout(() => {
+        load_awaitings();
+        load_active();
+    }, 0)
 }
 
 async function load_awaitings()
 {
-    let endpoint = "/api/"
-    response = await get(endpoint, new FormData());
+    let endpoint = "/api/free_cards";
+    let response = await get(endpoint, true);
+    if(response == "") return
+    avalible_cards = response;
+    
+    endpoint = "/api/no_cards_guests";
+    response = await get(endpoint, true);
     if(response == "") return
 
-    let awaitings = document.getElementById("awaitings");
+    let awaitings = document.getElementById("awaiting");
     awaitings.innerHTML = "";
     response.forEach(entry => {
         awaitings.appendChild(new_awaiting_entry(entry));
@@ -46,8 +49,8 @@ async function load_awaitings()
 
 async function load_active()
 {
-    let endpoint = "/api/"
-    response = await get(endpoint, new FormData());
+    let endpoint = "/api/active_guest_entries"
+    response = await get(endpoint, true);
     if(response == "") return
 
     let active = document.getElementById("active");
@@ -61,19 +64,19 @@ function new_awaiting_entry(data)
 {
     let entry = document.createElement("div");
     entry.className = "entry awaiting";
-    entry.name = data["id"];
+    entry.id = "entry-"+data["id"];
 
     let infos = document.createElement("div");
     infos.className = "infos col-12 col-xxl-6";
 
     let info = document.createElement("div");
     info.className = "info";
-    info.innerHTML = "Imię: "+data["guest_first_name"];
+    info.innerHTML = "Imię: "+data["guest_first_name"].htmlEntities();
     infos.appendChild(info);
 
     info = document.createElement("div");
     info.className = "info";
-    info.innerHTML = "Opiekun: "+data["keeper_full_name"];
+    info.innerHTML = "Opiekun: "+data["keeper_full_name"].htmlEntities();
     infos.appendChild(info);
 
     let clearboth = document.createElement("div");
@@ -82,12 +85,12 @@ function new_awaiting_entry(data)
 
     info = document.createElement("div");
     info.className = "info";
-    info.innerHTML = "Nazwisko: "+data["guest_last_name"];
+    info.innerHTML = "Nazwisko: "+data["guest_last_name"].htmlEntities();
     infos.appendChild(info);
 
     info = document.createElement("div");
     info.className = "info";
-    info.innerHTML = "Firma: "+data["company"];
+    info.innerHTML = "Firma: "+data["company"].htmlEntities();
     infos.appendChild(info);
 
     entry.appendChild(infos);
@@ -99,13 +102,14 @@ function new_awaiting_entry(data)
     span.innerHTML = "Numer karty: ";
     interactions.appendChild(span);
 
+    let div = document.createElement("div");
     let select = document.createElement("select");
-    data["cards"].forEach(card => {
+    avalible_cards.forEach(card => {
         let option = document.createElement("option");
-        option.innerHTML = card;
+        option.innerHTML = card.id;
+        option.value = card.id;
         select.appendChild(option);
     });
-    select.value = data["card"];
     interactions.appendChild(select);
 
     let button = document.createElement("button");
@@ -127,19 +131,19 @@ function new_active_entry(data)
 {
     let entry = document.createElement("div");
     entry.className = "entry active";
-    entry.name = data["id"];
+    entry.id = "entry-"+data["id"];
 
     let infos = document.createElement("div");
     infos.className = "infos col-12 col-lg-8";
 
     let info = document.createElement("div");
     info.className = "info";
-    info.innerHTML = "Imię: "+data["guest_first_name"];
+    info.innerHTML = "Imię: "+data["guest_first_name"].htmlEntities();
     infos.appendChild(info);
 
     info = document.createElement("div");
     info.className = "info";
-    info.innerHTML = "Opiekun: "+data["keeper_full_name"];
+    info.innerHTML = "Opiekun: "+data["keeper_full_name"].htmlEntities();
     infos.appendChild(info);
 
     let clearboth = document.createElement("div");
@@ -148,12 +152,12 @@ function new_active_entry(data)
 
     info = document.createElement("div");
     info.className = "info";
-    info.innerHTML = "Nazwisko: "+data["guest_last_name"];
+    info.innerHTML = "Nazwisko: "+data["guest_last_name"].htmlEntities();
     infos.appendChild(info);
 
     info = document.createElement("div");
     info.className = "info";
-    info.innerHTML = "Firma: "+data["company"];
+    info.innerHTML = "Firma: "+data["company"].htmlEntities();
     infos.appendChild(info);
 
     clearboth = document.createElement("div");
@@ -185,53 +189,52 @@ function new_active_entry(data)
     return entry;
 }
 
-async function accept(id, accept)
+async function accept(id)
 {
-    const endpoint = "/api/";
-    let formData = new FormData();
-    formData.append("accept", accept);
-    formData.append("id", id);
-    formData.append("card_id", $("[name="+id+"] select").value);
-    response = await get(endpoint, formData)
-    $("#output").html(response.json());
+    let endpoint = "/api/guest_entries/"+id+"/give_card/"+document.querySelector("#entry-"+id+" select").value;
+    document.getElementById("awaiting").removeChild(document.querySelector("#entry-"+id));
+    response = await get(endpoint);
     refresh();
 }
 
 async function release(id)
 {
-    const endpoint = "/api/";
-    let formData = new FormData();
-    formData.append("id", id);
-    response = await get(endpoint, formData)
-    $("#output").html(response.json());
+    let endpoint = "/api/guest_entries/"+id+"/close_entry";
+    document.getElementById("active").removeChild(document.querySelector("#entry-"+id));
+    response = await get(endpoint);
     refresh();
 }
 
-async function get(endpoint, formData)
+async function get(endpoint, quiet=false)
 {
     const response = await fetch(endpoint,
         {
-           method: "post",
-           body: formData,
+           method: "get",
            headers: {'X-CSRFToken': csrftoken},
            mode: 'same-origin',
        }
        ).catch(console.error);
-   if (response.ok){
-       $( "#output" ).css({"color":"green"})
-       output = "Operacja wykonana pomyślnie"
-       $( "#output" ).text(output);
-   }
-   else{
-       $( "#output" ).css({"color":"red"})
-       if (response.status == 403){
-           $( "#output" ).text(`403 Nieautoryzowany - spróbuj się ponownie zalogować do interfejsu gościa.`);
-       }
-       $( "#output" ).text(`Wystąpił nieznany błąd. Skontaktuj się z administratorami.`);
-   }
-   setTimeout(() => {
-       $("#output").text('');
-   }, 5000);
-   if(response.ok) return await response.json();
-   return "";
+    if(!quiet)
+    {
+        if (response.ok){
+            $( "#output" ).css({"color":"green"})
+            output = "Operacja wykonana pomyślnie"
+            $( "#output" ).text(output);
+        }
+        else{
+            $( "#output" ).css({"color":"red"})
+            if (response.status == 403){
+                $( "#output" ).text(`403 Nieautoryzowany - spróbuj się ponownie zalogować do interfejsu gościa.`);
+            }
+            $( "#output" ).text(`Wystąpił nieznany błąd. Skontaktuj się z administratorami.`);
+        }
+        setTimeout(() => {
+            $("#output").text('');
+        }, 5000);
+    }
+    if(response.ok)
+    {
+        return await response.json();
+    }
+   else return "";
 }
