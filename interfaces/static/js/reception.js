@@ -23,25 +23,27 @@ function auto_refresh()
 
 function refresh()
 {
-    setTimeout(() => {
-        load_awaitings();
-        load_active();
-    }, 0)
+    load_awaitings();
+    load_active();
 }
 
 async function load_awaitings()
 {
     let endpoint = "/api/free_cards";
     let response = await get(endpoint, true);
-    if(response == "") return
-    avalible_cards = response;
-    
+    let initial_text = "";
+    if(response == "")
+    {
+        initial_text = "<span style='color: red; font-weight: bold;'>Brak dostępnych kart do wydania.<br/>Dodaj więcej kart lub zwolnij te nieużywane.</span>";
+        avalible_cards = [];
+    }
+    else avalible_cards = response;
+
     endpoint = "/api/no_cards_guests";
     response = await get(endpoint, true);
-    if(response == "") return
 
     let awaitings = document.getElementById("awaiting");
-    awaitings.innerHTML = "";
+    awaitings.innerHTML = initial_text;
     response.forEach(entry => {
         awaitings.appendChild(new_awaiting_entry(entry));
     });
@@ -51,7 +53,6 @@ async function load_active()
 {
     let endpoint = "/api/active_guest_entries"
     response = await get(endpoint, true);
-    if(response == "") return
 
     let active = document.getElementById("active");
     active.innerHTML = "";
