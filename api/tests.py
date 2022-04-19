@@ -30,7 +30,8 @@ class GuestEntryTestCase(TestCase):
         Card.objects.create(**card_object)
         card = Card.objects.get(id = 1)
         guest_entry = {
-            "guest_full_name": "Szymon Sposób",
+            "guest_first_name": "Szymon",
+            "guest_last_name": "Sposób",
             "keeper_full_name": "Arkadiusz Szydlik",
             "notes": "Testowe notatki",
             "card": card
@@ -38,7 +39,7 @@ class GuestEntryTestCase(TestCase):
         GuestEntry.objects.create(**guest_entry)
 
     def test_guest_entry_creation(self):
-        guest_entry = GuestEntry.objects.get(guest_full_name="Szymon Sposób")
+        guest_entry = GuestEntry.objects.get(guest_first_name="Szymon")
         self.assertEqual(guest_entry.keeper_full_name, "Arkadiusz Szydlik")
 
 # API TESTS        
@@ -81,27 +82,56 @@ class GuestEntryTestCaseAPI(APITestCase):
         Card.objects.create(**self.card_object10)
 
         self.data = {
-            "guest_full_name": "Jan Sposób",
+            "guest_first_name": "Jan",
+            "guest_last_name": "Kowalski",
             "keeper_full_name": "Adam Sposób",
             "notes": "Testowe notatki",
             "company": "VIGO",
             "card": 1
         }
+        self.non_card_data = {
+            "guest_first_name": "Jan",
+            "guest_last_name": "Kowalski",
+            "keeper_full_name": "Adam Sposób",
+            "notes": "Testowe notatki",
+            "company": "VIGO",
+        }
+        self.card_data = {
+            # "guest_first_name": "Jan",
+            # "guest_last_name": "Kowalski",
+            # "keeper_full_name": "Adam Sposób",
+            # "notes": "Testowe notatki",
+            # "company": "VIGO",
+            
+            "card":1
+        }
+        self.bad_card_data = [
+        {
+            "guest_first_name": "Jan",
+            "guest_last_name": "Kowalski",
+            "keeper_full_name": "Adam Sposób",
+            "notes": "Testowe notatki",
+            "company": "VIGO",   
+        }]
+
         self.id_data = {
-            "guest_full_name": "Jan Sposób",
+            "guest_first_name": "Jan",
+            "guest_last_name": "Kowalski",
             "keeper_full_name": "Adam Sposób",
             "notes": "Testowe notatki",
             "card": 1
         }
 
         self.put_data = [{
-            "guest_full_name": "Jan Sposób",
+            "guest_first_name": "Jan",
+            "guest_last_name": "Kowalski",
             "keeper_full_name": "Adam Sposób",
             "notes": "Gość okazał się bardzo gburowaty i szorstki w obyciu.",
             "card": 1
         },
         {
-            "guest_full_name": "Jan Sposób",
+            "guest_first_name": "Jan",
+            "guest_last_name": "Kowalski",
             "keeper_full_name": "Adam Sposób",
             "notes": "Gość okazał się bardzo gburowaty i szorstki w obyciu.",
             "card": 1
@@ -110,7 +140,8 @@ class GuestEntryTestCaseAPI(APITestCase):
         self.bad_put_data = [
         
         {
-            "guest_full_name": "Jan Sposób",
+            "guest_first_name": "Jan",
+            "guest_last_name": "Kowalski",
             "keeper_full_name": "Adam Sposób",
             "notes": "Gość okazał się bardzo gburowaty i szorstki w obyciu.",
             "card": 10 #occupied card number
@@ -120,13 +151,15 @@ class GuestEntryTestCaseAPI(APITestCase):
 
         self.bad_data = [
         {
-            "guest_full_name": "Szymon Sposób",
+            "guest_first_name": "Jan",
+            "guest_last_name": "Kowalski",
             "keeper_full_name": "Arkadiusz Szydlik",
             "notes": "Testowe notatki",
             "card": 5
         },
         {
-            "guest_full_name": "Szymon Sposób",
+            "guest_first_name": "Jan",
+            "guest_last_name": "Kowalski",
             "keeper_full_name": "Arkadiusz Szydlik",
             "notes": "Testowe notatki",
             "card": 'asdfsadf'
@@ -137,7 +170,8 @@ class GuestEntryTestCaseAPI(APITestCase):
             "card": 5
         },
         {
-            "guest_full_name": "Jan Sposób II",
+            "guest_first_name": "Jan II",
+            "guest_last_name": "Kowalski",
             "keeper_full_name": "Adam Sposób II",
             "notes": "Testowe notatki",
             "card": 10
@@ -175,6 +209,20 @@ class GuestEntryTestCaseAPI(APITestCase):
         self.client.post("/api/guest_entries", self.data)
         response = self.client.delete("/api/guest_entries/1/")
         self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    @tag('wip')
+    def test_card_giving(self):
+        self.client.post("/api/guest_entries", self.non_card_data)
+        response = self.client.put("/api/guest_entries/1/give_card", self.card_data)
+        
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        entry = GuestEntry.objects.get(pk=1)
+        card = Card.objects.get(pk=1)
+        self.assertEqual(entry.card, card)
+
+        # for data in self.bad_card_data:
+        #     response = self.client.put("/api/guest_entries/1/give_card", self.data)
+        #     self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
 class CardTestCaseAPI(APITestCase):
     
@@ -227,7 +275,7 @@ class CardTestCaseAPI(APITestCase):
             response = self.client.put('/api/cards/1/', data)
             self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
-    @tag('wip')
+    
     def test_deleting(self):
         self.client.post('/api/cards', self.good_data[0])
         response = self.client.delete('/api/cards/1/')

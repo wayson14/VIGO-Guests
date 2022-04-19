@@ -22,4 +22,7 @@ class GuestEntrySerializer(serializers.ModelSerializer):
     # validators = [
     #     card_is_not_given(data['card'])
     # ]
-
+class CardGivingSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = GuestEntry
+        fields = ['card']

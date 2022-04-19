@@ -4,8 +4,10 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status, permissions
+from rest_framework.mixins import UpdateModelMixin
+from rest_framework.generics import GenericAPIView
 from .models import Card, GuestEntry
-from .serializers import Card, CardSerializer, GuestEntrySerializer
+from .serializers import Card, CardSerializer, GuestEntrySerializer, CardGivingSerializer
 # Create your views here.
 from .models import Card, GuestEntry
 
@@ -191,6 +193,9 @@ class GuestEntryDetailView(APIView):
                     return Response(serializer.data, status=status.HTTP_201_CREATED)
                 else:
                     return Response(f'Card of id {card.id} is already given.', status=status.HTTP_400_BAD_REQUEST)
+        else:
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
     # 5. Delete
     def delete(self, request, guest_entry_id, *args, **kwargs):
         '''
@@ -208,3 +213,14 @@ class GuestEntryDetailView(APIView):
             status=status.HTTP_200_OK
         )
 
+class GuestEntryGiveCard(GenericAPIView, UpdateModelMixin):
+    queryset = GuestEntry.objects.all()
+    serializer_class = CardGivingSerializer
+    def put(self, request, *args, **kwargs):
+        return self.partial_update(request)
+
+class NoCards(APIView):
+    def get(self, request, *args, **kwargs):
+        guest_entries = GuestEntry.objects.filter(card=None)
+        serializer = GuestEntrySerializer(guest_entries, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)

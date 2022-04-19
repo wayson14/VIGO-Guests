@@ -22,15 +22,15 @@ INTERNAL_IPS = [
 ]
 
 
-#move to base in future
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'vigo-guests',
-        'USER': 'postgres',
-        'PASSWORD': 'wLFaEwHIRCfWBTY9rU9gNsEIZ',
-        'HOST': 'localhost',
-        'PORT': '5432',
-    }
-}
+# #move to base in future
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql_psycopg2',
+#         'NAME': 'vigo-guests',
+#         'USER': 'postgres',
+#         'PASSWORD': 'wLFaEwHIRCfWBTY9rU9gNsEIZ',
+#         'HOST': 'localhost',
+#         'PORT': '5432',
+#     }
+# }
 """
