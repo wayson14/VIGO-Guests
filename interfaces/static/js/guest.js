@@ -9,17 +9,17 @@ function start()
 
 async function upload_data(form)
 {
-    const guest_full_name = form.querySelector("[name='guest_full_name']");
-    const lastname = form.querySelector("[name='lastname']");
+    const guest_first_name = form.querySelector("[name='guest_first_name']");
+    const guest_last_name = form.querySelector("[name='guest_last_name']");
     const keeper_full_name = form.querySelector("[name='keeper_full_name']");
     const company = form.querySelector("[name='company']");
     let output
-    if(!validate(guest_full_name, lastname, keeper_full_name, company)) return false;
+    if(!validate(guest_first_name, guest_last_name, keeper_full_name, company)) return false;
 
     const endpoint = "/api/guest_entries";
     const formData = new FormData();
-    formData.append("guest_full_name", guest_full_name.value);
-    // formData.append("lastname", lastname.value);
+    formData.append("guest_first_name", guest_first_name.value);
+    formData.append("guest_last_name", guest_last_name.value);
     formData.append("keeper_full_name", keeper_full_name.value);
     formData.append("company", company.value);
     console.log(formData);
@@ -53,30 +53,30 @@ async function upload_data(form)
     }, 5000)
 }
 
-function validate(guest_full_name, lastname, keeper_full_name, company)
+function validate(guest_first_name, guest_last_name, keeper_full_name, company)
 {
     let ok = true;
-    if(guest_full_name.value == "")
+    if(guest_first_name.value == "")
     {
-        guest_full_name.placeholder = "Imię jest wymagane";
-        guest_full_name.className = "invaild";
+        guest_first_name.placeholder = "Imię jest wymagane";
+        guest_first_name.className = "invaild";
         ok = false;
     }
     else
     {
-        guest_full_name.placeholder = "Imię";
-        guest_full_name.className = "";
+        guest_first_name.placeholder = "Imię";
+        guest_first_name.className = "";
     }
-    if(lastname.value == "")
+    if(guest_last_name.value == "")
     {
-        lastname.placeholder = "Nazwisko jest wymagane";
-        lastname.className = "invaild";
+        guest_last_name.placeholder = "Nazwisko jest wymagane";
+        guest_last_name.className = "invaild";
         ok = false;
     }
     else
     {
-        lastname.placeholder = "Nazwisko";
-        lastname.className = "";
+        guest_last_name.placeholder = "Nazwisko";
+        guest_last_name.className = "";
     }
     if(keeper_full_name.value == "")
     {

@@ -6,7 +6,8 @@ class Card(models.Model):
     is_given        = models.BooleanField(default=False)
 
 class GuestEntry(models.Model):
-    guest_full_name = models.CharField(max_length=100, blank=False)
+    guest_first_name = models.CharField(max_length=100, blank=False)
+    guest_last_name = models.CharField(max_length=100, blank=False)
     company         = models.CharField(max_length=100, null=True)
     enter_datetime  = models.DateTimeField(auto_now_add=True)
     exit_datetime   = models.DateTimeField(null=True)

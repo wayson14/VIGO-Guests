@@ -53,7 +53,8 @@ class GuestEntryView(APIView):
         
         
         data = {
-            'guest_full_name': request.data.get('guest_full_name'),
+            'guest_first_name': request.data.get('guest_first_name'),
+            'guest_last_name': request.data.get('guest_last_name'),
             'keeper_full_name': request.data.get('keeper_full_name'),
             'notes': request.data.get('notes'),
             'card': request.data.get('card'),
