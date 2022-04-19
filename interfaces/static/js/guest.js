@@ -44,9 +44,9 @@ async function upload_data(form)
         $( "#output" ).text(`Wystąpił nieznany błąd. Skontaktuj się z administratorami.`);
     }
     setTimeout(() => {
-        guest_full_name.value = '',
+        guest_first_name.value = '',
+        guest_last_name.value = '',
         keeper_full_name.value = '',
-        lastname.value = '',
         company.value = ''
         $( "#output" ).text('');
     }, 5000)
