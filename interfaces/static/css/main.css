@@ -142,8 +142,14 @@ body
     margin-right: 10px;
 }
 
-.entry input
+.entry select
 {
+    appearance: none;
+    padding: 0.25em 0.5em;
+    margin: 0;
+    cursor: pointer;
+    line-height: 1.1;
+    outline: none;
     display: inline-block;
     width: 50px;
     border: none;
@@ -152,9 +158,36 @@ body
     height: 2em;
 }
 
-.entry input:target
+.entry select:target
 {
     border: none;
+}
+
+.entry select:focus
+{
+    border: none;
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+}
+
+.select::after
+{
+    content: "";
+    width: 0.8em;
+    height: 0.5em;
+    background-color: var(--e-global-color-primary);
+    clip-path: polygon(100% 0%, 0 0%, 50% 100%);
+}
+
+.entry select option
+{
+    background-color: var(--e-global-color-accent);
+}
+
+.entry select option:hover
+{
+    background-color: var(--e-global-color-primary);
+    cursor: pointer;
 }
 
 .entry button
