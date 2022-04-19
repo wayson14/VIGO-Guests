@@ -201,7 +201,7 @@ async function decline(id)
 {
     let endpoint = "/api/guest_entries/"+id+"/discard_entry";
     document.getElementById("awaiting").removeChild(document.querySelector("#entry-"+id));
-    response = await get(endpoint);
+    response = await del(endpoint);
 }
 
 async function release(id)
@@ -217,6 +217,40 @@ async function get(endpoint, quiet=false)
     const response = await fetch(endpoint,
         {
            method: "get",
+           headers: {'X-CSRFToken': csrftoken},
+           mode: 'same-origin',
+       }
+       ).catch(console.error);
+    if(!quiet)
+    {
+        if (response.ok){
+            $( "#output" ).css({"color":"green"})
+            output = "Operacja wykonana pomyślnie"
+            $( "#output" ).text(output);
+        }
+        else{
+            $( "#output" ).css({"color":"red"})
+            if (response.status == 403){
+                $( "#output" ).text(`403 Nieautoryzowany - spróbuj się ponownie zalogować do interfejsu gościa.`);
+            }
+            $( "#output" ).text(`Wystąpił nieznany błąd. Skontaktuj się z administratorami.`);
+        }
+        setTimeout(() => {
+            $("#output").text('');
+        }, 5000);
+    }
+    if(response.ok)
+    {
+        return await response.json();
+    }
+   else return "";
+}
+
+async function del(endpoint, quiet=false)
+{
+    const response = await fetch(endpoint,
+        {
+           method: "delete",
            headers: {'X-CSRFToken': csrftoken},
            mode: 'same-origin',
        }
