@@ -249,12 +249,14 @@ class NoCardsGuests(APIView):
 
 class FreeCards(APIView):
     def get(self, request):
-        active_guest_entries = GuestEntry.objects.filter(exit_datetime=None).exclude(card=None)
-        cards = []
-        for entry in active_guest_entries:
-            if entry.card != None:
-                if entry.card.is_given == False:
-                    cards.append(entry.card)
+        # active_guest_entries = GuestEntry.objects.filter(exit_datetime=None).exclude(card=None)
+        # cards = []
+        c = Card.objects.filter(is_given = False)
+        cards = list(c)
+        # for entry in active_guest_entries:
+        #     if entry.card != None:
+        #         if entry.card.is_given == False:
+        #             cards.append(entry.card)
         # for entry in active_guest_entries
         # active_guest_entries = list(active_guest_entries)
         serializer = CardSerializer(cards, many=True)
