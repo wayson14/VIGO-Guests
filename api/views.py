@@ -6,9 +6,11 @@ from rest_framework.response import Response
 from rest_framework import status, permissions
 from rest_framework.mixins import UpdateModelMixin
 from rest_framework.generics import GenericAPIView
+from django.shortcuts import get_object_or_404
+from datetime import datetime
+from django.http import JsonResponse
 from .models import Card, GuestEntry
 from .serializers import Card, CardSerializer, GuestEntrySerializer, CardGivingSerializer
-# Create your views here.
 from .models import Card, GuestEntry
 
 class CardView(APIView):
@@ -219,6 +221,26 @@ class GuestEntryGiveCard(GenericAPIView, UpdateModelMixin):
     def put(self, request, *args, **kwargs):
         return self.partial_update(request)
 
+class GiveCard(APIView):
+    def get(self, request, ge_id, card_id):
+        guest_entry = get_object_or_404(GuestEntry, pk=ge_id)
+        card = get_object_or_404(Card, pk = card_id)
+        if guest_entry.card != None:
+            return JsonResponse({"guest_entry": f"GuestEntry {ge_id} has already been assigned with Card {guest_entry.card.id} "}, status=400)
+        elif card.is_given == True:
+            return JsonResponse({"card": f"Card {card_id} has already been given to other guest!"}, status=400)
+        else:
+            guest_entry.card = card
+            card.is_given = True
+            guest_entry.save()
+            card.save()
+        
+        return JsonResponse({"success": f"GuestEntry {ge_id} has been given Card {card_id}"})
+
+
+
+
+
 class NoCardsGuests(APIView):
     def get(self, request, *args, **kwargs):
         guest_entries = GuestEntry.objects.filter(card=None)
@@ -227,13 +249,30 @@ class NoCardsGuests(APIView):
 
 class FreeCards(APIView):
     def get(self, request):
-        
         active_guest_entries = GuestEntry.objects.filter(exit_datetime=None).exclude(card=None)
         cards = []
         for entry in active_guest_entries:
             if entry.card != None:
-                cards.append(entry.card)
+                if entry.card.is_given == False:
+                    cards.append(entry.card)
         # for entry in active_guest_entries
         # active_guest_entries = list(active_guest_entries)
         serializer = CardSerializer(cards, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+class ActiveGuestEntries(APIView):
+    def get(self, request):
+        active_guest_entries = GuestEntry.objects.filter(exit_datetime=None).exclude(card=None)
+        serializer = GuestEntrySerializer(active_guest_entries, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+class CloseGuestEntry(APIView):
+    def get(self, request, guest_entry_id):
+        guest_entry = get_object_or_404(GuestEntry, pk=guest_entry_id)
+        card = guest_entry.card
+        card.is_given = False
+        card.save()
+        guest_entry.exit_datetime = datetime.now()
+        guest_entry.save()
+
+        return Response( status=status.HTTP_200_OK)
