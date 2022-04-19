@@ -34,7 +34,7 @@ function refresh()
 async function load_awaitings()
 {
     let endpoint = "/api/"
-    response = await get(endpoint, formData);
+    response = await get(endpoint, new FormData());
     if(response == "") return
 
     let awaitings = document.getElementById("awaitings");
@@ -47,7 +47,7 @@ async function load_awaitings()
 async function load_active()
 {
     let endpoint = "/api/"
-    response = await get(endpoint, formData);
+    response = await get(endpoint, new FormData());
     if(response == "") return
 
     let active = document.getElementById("active");
@@ -194,6 +194,7 @@ async function accept(id, accept)
     formData.append("card_id", $("[name="+id+"] select").value);
     response = await get(endpoint, formData)
     $("#output").html(response.json());
+    refresh();
 }
 
 async function release(id)
@@ -203,6 +204,7 @@ async function release(id)
     formData.append("id", id);
     response = await get(endpoint, formData)
     $("#output").html(response.json());
+    refresh();
 }
 
 async function get(endpoint, formData)
@@ -227,13 +229,8 @@ async function get(endpoint, formData)
        }
        $( "#output" ).text(`Wystąpił nieznany błąd. Skontaktuj się z administratorami.`);
    }
-   refresh();
    setTimeout(() => {
-       guest_full_name.value = '',
-       keeper_full_name.value = '',
-       lastname.value = '',
-       company.value = ''
-       $( "#output" ).text('');
+       $("#output").text('');
    }, 5000);
    if(response.ok) return await response.json();
    return "";
