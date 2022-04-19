@@ -280,6 +280,7 @@ class CloseGuestEntry(APIView):
         return Response( status=status.HTTP_200_OK)
 
 class DiscardGuestEntry(APIView):
+    permission_classes = [permissions.IsAuthenticated]
     def delete(self, request, guest_entry_id):
         guest_entry = get_object_or_404(GuestEntry, pk=guest_entry_id)
         if guest_entry.card == None:
