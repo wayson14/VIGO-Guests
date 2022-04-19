@@ -278,3 +278,12 @@ class CloseGuestEntry(APIView):
         guest_entry.save()
 
         return Response( status=status.HTTP_200_OK)
+
+class DiscardGuestEntry(APIView):
+    def delete(self, request, guest_entry_id):
+        guest_entry = get_object_or_404(GuestEntry, pk=guest_entry_id)
+        if guest_entry.card == None:
+            guest_entry.delete()
+        else:
+            return JsonResponse({"GuestEntry":"Has a card."}, status=status.HTTP_400_BAD_REQUEST)
+        return JsonResponse({"GuestEntry":"Has been deleted"}, status=status.HTTP_200_OK)
