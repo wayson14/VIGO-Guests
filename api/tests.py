@@ -224,6 +224,7 @@ class GuestEntryTestCaseAPI(APITestCase):
         #     response = self.client.put("/api/guest_entries/1/give_card", self.data)
         #     self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
+
 class CardTestCaseAPI(APITestCase):
     
     def setUp(self):

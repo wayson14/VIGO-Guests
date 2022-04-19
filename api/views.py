@@ -219,8 +219,21 @@ class GuestEntryGiveCard(GenericAPIView, UpdateModelMixin):
     def put(self, request, *args, **kwargs):
         return self.partial_update(request)
 
-class NoCards(APIView):
+class NoCardsGuests(APIView):
     def get(self, request, *args, **kwargs):
         guest_entries = GuestEntry.objects.filter(card=None)
         serializer = GuestEntrySerializer(guest_entries, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+class FreeCards(APIView):
+    def get(self, request):
+        
+        active_guest_entries = GuestEntry.objects.filter(exit_datetime=None).exclude(card=None)
+        cards = []
+        for entry in active_guest_entries:
+            if entry.card != None:
+                cards.append(entry.card)
+        # for entry in active_guest_entries
+        # active_guest_entries = list(active_guest_entries)
+        serializer = CardSerializer(cards, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)

@@ -8,7 +8,8 @@ from .views import (
     GuestEntryView,
     GuestEntryDetailView,
     GuestEntryGiveCard,
-    NoCards,
+    NoCardsGuests,
+    FreeCards,
 )
 
 urlpatterns = [
@@ -17,5 +18,6 @@ urlpatterns = [
     path('guest_entries/<int:guest_entry_id>/', GuestEntryDetailView.as_view()),
     path('guest_entries/<int:pk>/give_card', GuestEntryGiveCard.as_view()),
     path('cards/<int:card_id>/', CardDetailView.as_view()),
-    path('no_cards', NoCards.as_view()),
+    path('no_cards_guests', NoCardsGuests.as_view()),
+    path('free_cards', FreeCards.as_view()),
 ]
