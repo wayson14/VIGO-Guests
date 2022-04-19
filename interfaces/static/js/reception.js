@@ -113,12 +113,12 @@ function new_awaiting_entry(data)
     interactions.appendChild(select);
 
     let button = document.createElement("button");
-    button.addEventListener("click", function(){accept(data["id"], true);});
+    button.addEventListener("click", function(){accept(data["id"]);});
     button.innerHTML = "ZATWIERDŹ";
     interactions.appendChild(button);
 
     button = document.createElement("button");
-    button.addEventListener("click", function(){accept(data["id"], false);});
+    button.addEventListener("click", function(){decline(data["id"]);});
     button.innerHTML = "ODRZUĆ";
     interactions.appendChild(button);
 
@@ -195,6 +195,13 @@ async function accept(id)
     document.getElementById("awaiting").removeChild(document.querySelector("#entry-"+id));
     response = await get(endpoint);
     refresh();
+}
+
+async function decline(id)
+{
+    let endpoint = "/api/guest_entries/"+id+"/discard_entry";
+    document.getElementById("awaiting").removeChild(document.querySelector("#entry-"+id));
+    response = await get(endpoint);
 }
 
 async function release(id)
