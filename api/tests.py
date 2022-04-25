@@ -45,7 +45,7 @@ class GuestEntryTestCase(TestCase):
 # API TESTS        
 class LoginTestCase(APITestCase):
     def setUp(self):
-        user = User.objects.create(username='testuser')
+        user = User.objects.create(username='testuser', is_staff=True)
         user.set_password('qazwsx')
         user.save()
         self.client = Client()
@@ -65,8 +65,9 @@ class LoginTestCase(APITestCase):
 class GuestEntryTestCaseAPI(APITestCase):
     def setUp(self):
         self.client = APIClient()
-        user = User.objects.create(username='testuser')
+        user = User.objects.create(username='testuser', is_staff=True)
         user.set_password('qazwsx')
+        
         user.save()
         self.logged_in = self.client.login(username='testuser', password='qazwsx')
 
@@ -229,7 +230,7 @@ class CardTestCaseAPI(APITestCase):
     
     def setUp(self):
         self.client = APIClient()
-        user = User.objects.create(username='testuser')
+        user = User.objects.create(username='testuser', is_staff=True)
         user.set_password('qazwsx')
         user.save()
         self.logged_in = self.client.login(username='testuser', password='qazwsx')

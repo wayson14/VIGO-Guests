@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status, permissions
@@ -11,9 +11,13 @@ from datetime import datetime
 from django.http import JsonResponse
 from .models import Card, GuestEntry
 from .serializers import Card, CardSerializer, GuestEntrySerializer, CardGivingSerializer
-from .models import Card, GuestEntry
+from .models import Card, GuestEntry 
 
-class CardView(APIView):
+class StaffRequiredMixin(LoginRequiredMixin, UserPassesTestMixin):
+    def test_func(self):
+        return self.request.user.is_staff
+
+class CardView(StaffRequiredMixin, APIView):
     def get(self, request, *args, **kwargs):
         '''
         List all the card items for given requested user
@@ -39,7 +43,7 @@ class CardView(APIView):
     
     # def delete()
 
-class GuestEntryView(APIView):
+class GuestEntryView(StaffRequiredMixin,APIView):
     def get(self, request, *args, **kwargs):
         '''
         List all the GuestEntry objects
@@ -82,7 +86,7 @@ class GuestEntryView(APIView):
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-class CardDetailView(LoginRequiredMixin, APIView):
+class CardDetailView(StaffRequiredMixin, APIView):
     def get_object(self, card_id):
         '''
         Helper method to get the object with given card_id
@@ -136,7 +140,7 @@ class CardDetailView(LoginRequiredMixin, APIView):
             status=status.HTTP_200_OK
         )
 
-class GuestEntryDetailView(APIView):
+class GuestEntryDetailView(StaffRequiredMixin, APIView):
     permission_classes = [permissions.IsAuthenticated]
     def get_object(self, guest_entry_id):
         '''
@@ -215,7 +219,7 @@ class GuestEntryDetailView(APIView):
             status=status.HTTP_200_OK
         )
 
-class GuestEntryGiveCard(GenericAPIView, UpdateModelMixin):
+class GuestEntryGiveCard(StaffRequiredMixin, GenericAPIView, UpdateModelMixin):
     queryset = GuestEntry.objects.all()
     serializer_class = CardGivingSerializer
     def put(self, request, *args, **kwargs):
@@ -241,13 +245,13 @@ class GiveCard(APIView):
 
 
 
-class NoCardsGuests(APIView):
+class NoCardsGuests(StaffRequiredMixin, APIView):
     def get(self, request, *args, **kwargs):
         guest_entries = GuestEntry.objects.filter(card=None)
         serializer = GuestEntrySerializer(guest_entries, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-class FreeCards(APIView):
+class FreeCards(StaffRequiredMixin, APIView):
     def get(self, request):
         # active_guest_entries = GuestEntry.objects.filter(exit_datetime=None).exclude(card=None)
         # cards = []
@@ -262,13 +266,13 @@ class FreeCards(APIView):
         serializer = CardSerializer(cards, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-class ActiveGuestEntries(APIView):
+class ActiveGuestEntries(StaffRequiredMixin, APIView):
     def get(self, request):
         active_guest_entries = GuestEntry.objects.filter(exit_datetime=None).exclude(card=None)
         serializer = GuestEntrySerializer(active_guest_entries, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-class CloseGuestEntry(APIView):
+class CloseGuestEntry(StaffRequiredMixin, APIView):
     def get(self, request, guest_entry_id):
         guest_entry = get_object_or_404(GuestEntry, pk=guest_entry_id)
         card = guest_entry.card
@@ -279,7 +283,7 @@ class CloseGuestEntry(APIView):
 
         return Response( status=status.HTTP_200_OK)
 
-class DiscardGuestEntry(APIView):
+class DiscardGuestEntry(StaffRequiredMixin, APIView):
     permission_classes = [permissions.IsAuthenticated]
     def delete(self, request, guest_entry_id):
         guest_entry = get_object_or_404(GuestEntry, pk=guest_entry_id)

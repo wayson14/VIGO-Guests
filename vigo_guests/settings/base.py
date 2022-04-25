@@ -129,9 +129,11 @@ AUTH_PASSWORD_VALIDATORS = [
 
 # LDAP AD
 
-AUTHENTICATION_BACKENDS = ["django.contrib.auth.backends.ModelBackend",
-"django_auth_ldap.backend.LDAPBackend",
-    
+AUTHENTICATION_BACKENDS = [
+    "django.contrib.auth.backends.ModelBackend",
+
+    # uncomment to work with AD
+    # "django_auth_ldap.backend.LDAPBackend", 
 ]
 AUTH_LDAP_SERVER_URI = "ldap://192.168.11.4:389"
 
@@ -148,19 +150,19 @@ AUTH_LDAP_USER_ATTR_MAP = {
 }
 
 AUTH_LDAP_ALWAYS_UPDATE_USER = True
-
+AUTH_LDAP_GROUP_SEARCH = LDAPSearch(
+    "CN=aplikacja_recepcja,OU=WsparcieGroups,OU=Groups,OU=Vigo,DC=ad,DC=vigo,DC=com,DC=pl", ldap.SCOPE_SUBTREE
+)
 AUTH_LDAP_GROUP_TYPE = NestedActiveDirectoryGroupType(name_attr="cn")
 AUTH_LDAP_USER_FLAGS_BY_GROUP = {
-    "is_superuser": "CN=aplikacja_recepcja,OU=WsparcieGroups,OU=Groups,OU=Vigo,DC=ad,DC=vigo,DC=com,DC=pl",
+    "is_superuser": "CN=aplikacja_recepcja_admin,OU=WsparcieGroups,OU=Groups,OU=Vigo,DC=ad,DC=vigo,DC=com,DC=pl",
     "is_staff": "CN=aplikacja_recepcja,OU=WsparcieGroups,OU=Groups,OU=Vigo,DC=ad,DC=vigo,DC=com,DC=pl",
 }
 AUTH_LDAP_FIND_GROUP_PERMS = True
 AUTH_LDAP_CACHE_GROUPS = True
 AUTH_LDAP_GROUP_CACHE_TIMEOUT = 1
 
-
-
-
+LOGIN_URL = "/admin/login/"
 
 # Internationalization
 # https://docs.djangoproject.com/en/4.0/topics/i18n/
