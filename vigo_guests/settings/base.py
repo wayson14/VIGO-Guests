@@ -133,7 +133,7 @@ AUTHENTICATION_BACKENDS = [
     "django.contrib.auth.backends.ModelBackend",
 
     # uncomment to work with AD
-    # "django_auth_ldap.backend.LDAPBackend", 
+    "django_auth_ldap.backend.LDAPBackend", 
 ]
 AUTH_LDAP_SERVER_URI = "ldap://192.168.11.4:389"
 
