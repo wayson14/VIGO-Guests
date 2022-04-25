@@ -22,7 +22,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('logout/', views.logout_view),
     path('guest/', views.guest),
-    path('panel/', views.panel),
+    path('/', views.panel),
     path('reception/', views.reception),
     path('api/', include(api_urls)),
     path('api-auth/', include('rest_framework.urls')),
