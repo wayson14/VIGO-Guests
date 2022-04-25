@@ -11,6 +11,8 @@ def guest(request):
 def reception(request):
     return render(request, 'reception_interface.html')
 
+def panel(request):
+    return render(request, 'panel.html')
 def logout_view(request):
     logout(request)
     return redirect("/reception")

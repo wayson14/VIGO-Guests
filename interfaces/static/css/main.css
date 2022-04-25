@@ -237,3 +237,20 @@ footer
     font-weight: bold;
     width: 100vw;
 }
+
+.choice-button {
+    background-color: var(--e-global-color-86ca2fe);
+    color: var(--e-global-color-primary);
+    border: 3px solid var(--e-global-color-primary);
+    font-size: 1em;
+    font-weight: bold;
+    height: 3em;
+    width: 50%;
+    margin-top: 10px;
+    text-align: center;
+    border-radius: 1.5em;
+}
+#list {
+    display: flex;
+    flex-direction: column;
+}

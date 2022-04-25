@@ -91,7 +91,7 @@ INTERNAL_IPS = [
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'vigo-guests',
+        'NAME': 'vigo_guests',
         'USER': 'postgres',
         'PASSWORD': 'wLFaEwHIRCfWBTY9rU9gNsEIZ',
         'HOST': 'localhost',

@@ -1,7 +1,8 @@
 import openpyxl
 from pathlib import Path
 import datetime
-from .serializers import GuestEntrySerializer
+from .models import *
+from .serializers import CardSerializer, GuestEntrySerializer
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
@@ -11,6 +12,30 @@ import pytz
 class Importer(APIView):
 
     def get(self, request):
+        cards = Card.objects.all()
+        occured = []
+        for card in cards:
+            if card.id >= -1 and card.id <= 50:
+                occured.append(card.id)
+                if occured.count(card.id) > 1:
+                    return Response("one card occured multiple times inside a range")
+        
+        i = -1
+        for i in range(51):
+            if not i in occured:
+                card_object = {
+                    "id": i,
+                    "is_given": False 
+                }
+                serializer = CardSerializer(data = card_object)
+                if serializer.is_valid():
+                    serializer.save()
+                else:
+                    print(f'Adding stopped at {i} card')
+                    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            # return Response("OK")
+        
+        
         xlsx_file = Path("api/data.xlsx")
         wb_obj = openpyxl.load_workbook(xlsx_file) 
 
@@ -62,11 +87,14 @@ class Importer(APIView):
                 'enter_datetime': entry_datetime,
                 'exit_datetime': exit_datetime
             }
+            print('==============')
+            print(data)
+            print('==============')
             serializer = GuestEntrySerializer(data = data)
             if serializer.is_valid():
                 serializer.save()
             else: print("Row not valid - "+str(i))
-            if(i%100 == 0): print("Passed row "+str(i))
+            if(i%100 == 0): print(f"{serializer.errors}Passed row "+str(i))
             i += 1
         print("Importing completed!")
         return Response(serializer.data, status=status.HTTP_200_OK)
