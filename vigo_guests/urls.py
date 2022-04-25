@@ -20,6 +20,7 @@ from api import urls as api_urls
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('logout/', views.logout_view),
     path('guest/', views.guest),
     path('reception/', views.reception),
     path('api/', include(api_urls)),

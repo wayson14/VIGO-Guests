@@ -163,7 +163,7 @@ AUTH_LDAP_CACHE_GROUPS = True
 AUTH_LDAP_GROUP_CACHE_TIMEOUT = 1
 
 LOGIN_URL = "/admin/login/"
-
+LOGOUT_REDIRECT_URL = "/"
 # Internationalization
 # https://docs.djangoproject.com/en/4.0/topics/i18n/
 
