@@ -28,7 +28,7 @@ function handle_messages(event)
 
 function auto_refresh()
 {
-    refresh();
+    refresh
     setTimeout(() => {
         auto_refresh();
     }, 3000);
