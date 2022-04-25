@@ -50,6 +50,7 @@ async function load_awaitings()
         initial_text = "<span style='color: red; font-weight: bold;'>Brak dostępnych kart do wydania.<br/>Dodaj więcej kart lub zwolnij te nieużywane.</span>";
         avalible_cards = [];
     }
+    
     else avalible_cards = response;
 
     endpoint = "/api/no_cards_guests";
@@ -118,7 +119,7 @@ function new_awaiting_entry(data)
 
     let div = document.createElement("div");
     let select = document.createElement("select");
-    avalible_cards.forEach(card => {
+    avalible_cards.filter(card => card.id !== -1).forEach(card => {
         let option = document.createElement("option");
         option.innerHTML = card.id;
         option.value = card.id;

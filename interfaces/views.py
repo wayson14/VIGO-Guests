@@ -3,7 +3,7 @@ from django.http import HttpResponse
 from django.contrib.admin.views.decorators import staff_member_required
 from django.shortcuts import redirect
 from django.contrib.auth import login, logout
-@staff_member_required
+# @staff_member_required
 def guest(request):
     return render(request, 'guest_interface.html')
 

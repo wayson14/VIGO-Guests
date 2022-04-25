@@ -9,6 +9,8 @@ from rest_framework.generics import GenericAPIView
 from django.shortcuts import get_object_or_404
 from datetime import datetime
 from django.http import JsonResponse
+from django.contrib.admin.views.decorators import staff_member_required
+
 from .models import Card, GuestEntry
 from .serializers import Card, CardSerializer, GuestEntrySerializer, CardGivingSerializer
 from .models import Card, GuestEntry 
@@ -43,7 +45,8 @@ class CardView(StaffRequiredMixin, APIView):
     
     # def delete()
 
-class GuestEntryView(StaffRequiredMixin,APIView):
+class GuestEntryView(APIView):
+    @staff_member_required
     def get(self, request, *args, **kwargs):
         '''
         List all the GuestEntry objects
@@ -59,7 +62,10 @@ class GuestEntryView(StaffRequiredMixin,APIView):
         '''
         # find card of specified id
         
-        
+        if request.data.get('enter_datetime') == None:
+            enter_datetime = datetime.now()
+        else:
+            enter_datetime = request.data.get('enter_datetime')
         data = {
             'guest_first_name': request.data.get('guest_first_name'),
             'guest_last_name': request.data.get('guest_last_name'),
@@ -67,7 +73,7 @@ class GuestEntryView(StaffRequiredMixin,APIView):
             'notes': request.data.get('notes'),
             'card': request.data.get('card'),
             'company': request.data.get('company'),
-            'enter_datetime': request.data.get('enter_datetime'),
+            'enter_datetime': enter_datetime,
             'exit_datetime': request.data.get('exit_datetime')
         }
         serializer = GuestEntrySerializer(data=data)
@@ -85,6 +91,7 @@ class GuestEntryView(StaffRequiredMixin,APIView):
                     return Response(f'Card of id {card.id} is already given.', status=status.HTTP_400_BAD_REQUEST)
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
 
 class CardDetailView(StaffRequiredMixin, APIView):
     def get_object(self, card_id):
