@@ -19,10 +19,10 @@ from interfaces import views
 from api import urls as api_urls
 
 urlpatterns = [
+    path('', views.panel),
     path('admin/', admin.site.urls),
     path('logout/', views.logout_view),
     path('guest/', views.guest),
-    path('/', views.panel),
     path('reception/', views.reception),
     path('api/', include(api_urls)),
     path('api-auth/', include('rest_framework.urls')),
