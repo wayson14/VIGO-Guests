@@ -38,6 +38,39 @@ body
     left: 0;
 }
 
+#topbar a
+{
+    display: block;
+    font-size: 1em;
+    height: 50px;
+    line-height: 40px;
+    position: absolute;
+    top: 0;
+    right: 0;
+    background-color: var(--e-global-color-primary);
+    text-decoration: none;
+    color: var(--e-global-color-86ca2fe);
+    padding-left: 10px;
+    padding-right: 10px;
+    text-align: center;
+    transition: transform 0.3s;
+    font-weight: normal;
+    border-left: 2px solid var(--e-global-color-ea6f3a4);
+}
+
+#topbar a:hover
+{
+    background-color: var(--e-global-color-accent);
+    transform: scale(0.9);
+}
+
+#topbar a:focus
+{
+    background-color: var(--e-global-color-accent);
+    transform: scale(0.9);
+    outline: none;
+}
+
 .container
 {
     background-color: var(--e-global-color-743c696);
@@ -104,7 +137,10 @@ body
 
 #add-form [type="submit"]:focus
 {
+    background-color: var(--e-global-color-accent);
+    transform: scale(0.9);
     border: none;
+    outline: none;
 }
 
 .entry

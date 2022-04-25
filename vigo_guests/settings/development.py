@@ -6,7 +6,7 @@ INSTALLED_APPS += [
     'debug_toolbar',
 ]
 
-# ALLOWED_HOSTS = ['192.168.11.24']
+#ALLOWED_HOSTS = ['192.168.11.24', "127.0.0.1"]
 MIDDLEWARE += ['debug_toolbar.middleware.DebugToolbarMiddleware', ]
 
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
