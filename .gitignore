@@ -1,6 +1,7 @@
 .vscode
 Pipfile
 Pipfile.lock
+api/data.xlsx
 
 
 # Django #

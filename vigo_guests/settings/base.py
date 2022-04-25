@@ -11,9 +11,11 @@ https://docs.djangoproject.com/en/4.0/ref/settings/
 """
 
 from pathlib import Path
+"""
 import ldap
 from django_auth_ldap.config import LDAPSearch
 from django_auth_ldap.config import NestedActiveDirectoryGroupType
+"""
 import logging
 logger = logging.getLogger('django_auth_ldap')
 logger.addHandler(logging.StreamHandler())
@@ -128,6 +130,7 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 # LDAP AD
+"""
 
 AUTHENTICATION_BACKENDS = [
     "django.contrib.auth.backends.ModelBackend",
@@ -164,6 +167,7 @@ AUTH_LDAP_GROUP_CACHE_TIMEOUT = 1
 
 LOGIN_URL = "/admin/login/"
 LOGOUT_REDIRECT_URL = "/"
+"""
 # Internationalization
 # https://docs.djangoproject.com/en/4.0/topics/i18n/
 

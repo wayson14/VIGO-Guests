@@ -1,7 +1,7 @@
-from django.urls import re_path
+from django.urls import path
 from .consumers import WSConsumer
 
 
 ws_urlpatterns = [
-    re_path(r"ws/socket_connection/", WSConsumer)
+    path("ws/socket_connection/", WSConsumer.as_asgi())
 ]
