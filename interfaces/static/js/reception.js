@@ -119,7 +119,8 @@ function new_awaiting_entry(data)
 
     let div = document.createElement("div");
     let select = document.createElement("select");
-    avalible_cards.filter(card => card.id !== -1).forEach(card => {
+    avalible_cards.filter(card => card.id !== -1).sort((a, b) => {        return a - b
+     }).forEach(card => {
         let option = document.createElement("option");
         option.innerHTML = card.id;
         option.value = card.id;
