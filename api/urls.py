@@ -16,6 +16,8 @@ from .views import (
     GiveCard
 )
 
+from .importer import Importer
+
 urlpatterns = [
     path('cards', CardView.as_view()),
     path('guest_entries', GuestEntryView.as_view()),
@@ -27,5 +29,5 @@ urlpatterns = [
     path('no_cards_guests', NoCardsGuests.as_view()),
     path('free_cards', FreeCards.as_view()),
     path('active_guest_entries', ActiveGuestEntries.as_view()),
-    
+    path('import', Importer.as_view())
 ]

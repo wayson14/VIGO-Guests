@@ -2,6 +2,14 @@ window.onload = start;
 const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
 var avalible_cards = [];
 
+var socket = new WebSocket("ws://127.0.0.1:8000/ws/socket_connection/");
+socket.onerror = function(event)
+{
+    let data = event;
+    console.log(data);
+}
+socket.onmessage = handle_messages;
+
 String.prototype.htmlEntities = function()
 {
     return this.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
@@ -9,8 +17,13 @@ String.prototype.htmlEntities = function()
 
 function start()
 {
-    console.log("działa");
     refresh();
+}
+
+function handle_messages(event)
+{
+    let data = JSON.parse(event.data);
+    console.log(data);
 }
 
 function auto_refresh()

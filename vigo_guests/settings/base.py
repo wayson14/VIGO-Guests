@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    "channels",
     'rest_framework',
     "interfaces",
     "api",
@@ -77,15 +78,33 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'vigo_guests.wsgi.application'
+ASGI_APPLICATION = 'vigo_guests.asgi.application'
 
 
 # Database
 # https://docs.djangoproject.com/en/4.0/ref/settings/#databases
 
+INTERNAL_IPS = [
+    "127.0.0.1",
+]
+
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': 'vigo-guests',
+        'USER': 'postgres',
+        'PASSWORD': 'wLFaEwHIRCfWBTY9rU9gNsEIZ',
+        'HOST': 'localhost',
+        'PORT': '5432',
+    }
+}
+
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channel_redis.core.RedisChannelLayer",
+        "CONFIG": {
+            "hosts": [("127.0.0.1", 6379)]
+        }
     }
 }
 
