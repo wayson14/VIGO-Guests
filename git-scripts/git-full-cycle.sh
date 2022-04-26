@@ -1,4 +1,4 @@
-source ./git-scripts/add-commit.sh "$1"
+source ./git-scripts/add-commit.sh "$1" &&
 source ./venv/bin/activate
 pip freeze > req.txt
 source ./git-scripts/fetch-rebase-push.sh 
