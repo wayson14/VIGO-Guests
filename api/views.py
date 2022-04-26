@@ -11,6 +11,9 @@ from datetime import datetime
 from django.http import JsonResponse
 from django.contrib.admin.views.decorators import staff_member_required
 
+from asgiref.sync import async_to_sync
+from channels.layers import get_channel_layer
+
 from .models import Card, GuestEntry
 from .serializers import Card, CardSerializer, GuestEntrySerializer, CardGivingSerializer
 from .models import Card, GuestEntry 
@@ -60,8 +63,20 @@ class GuestEntryView(APIView):
         '''
         Create the GuestEntry with given data
         '''
+    
+        #send message to consumer 
+        async def send_prompt():
+            channel_layer = get_channel_layer()
+            await print('CHANNEL LAYER', channel_layer)
+            await channel_layer.send(
+                "stream",
+                {
+                    'type': 'message',
+                    'message': 'test'
+                }
+            )
+
         # find card of specified id
-        
         if request.data.get('enter_datetime') == None:
             enter_datetime = datetime.now()
         else:

@@ -2,13 +2,35 @@ window.onload = start;
 const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
 var avalible_cards = [];
 
-var socket = new WebSocket("ws://127.0.0.1:8000/ws/socket_connection/");
-socket.onerror = function(event)
-{
-    let data = event;
-    console.log(data);
-}
-socket.onmessage = handle_messages;
+
+function connect() {
+    var ws = new WebSocket('ws://'+window.location.host+'/ws/socket_connection/');
+    ws.onopen = function() {
+      // subscribe to some channels
+    //   ws.send(JSON.stringify({
+    //       "message": "Connection established"
+    //       //.... some message the I must send when I connect ....
+    //   }));
+    };
+  
+    ws.onmessage = function(e) {
+      console.log('Message:', e.data);
+    };
+  
+    ws.onclose = function(e) {
+      console.log('Socket is closed. Reconnect will be attempted in 5 second.', e.reason);
+      setTimeout(function() {
+        connect();
+      }, 5000);
+    };
+  
+    ws.onerror = function(err) {
+      console.error('Socket encountered error: ', err.message, 'Closing socket');
+      ws.close();
+    };
+  }
+  
+  connect();
 
 String.prototype.htmlEntities = function()
 {
@@ -17,21 +39,7 @@ String.prototype.htmlEntities = function()
 
 function start()
 {
-    refresh();
-}
-
-function handle_messages(event)
-{
-    let data = JSON.parse(event.data);
-    console.log(data);
-}
-
-function auto_refresh()
-{
-    refresh
-    setTimeout(() => {
-        auto_refresh();
-    }, 3000);
+    refresh()
 }
 
 function refresh()
