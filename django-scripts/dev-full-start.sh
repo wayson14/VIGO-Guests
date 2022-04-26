@@ -6,8 +6,8 @@ fi
 source ./venv/bin/activate
 
 export DJANGO_SECRET_KEY='django-insecure-a1@u+((7+uk%e9^p69061#5lykrsleazjfewd2sp#6lk03p&wh'
-export DB_PASSWORD="wLFaEwHIRCfWBTY9rU9gNsEIZ"
-export AUTH_LDAP_BIND_PASSWORD="!Wsparcie5005"
+export DB_PASSWORD='wLFaEwHIRCfWBTY9rU9gNsEIZ'
+export AUTH_LDAP_BIND_PASSWORD='!Wsparcie5005'
 
 pip install -r req.txt
 python ./manage.py makemigrations

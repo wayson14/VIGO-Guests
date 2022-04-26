@@ -140,7 +140,7 @@ AUTHENTICATION_BACKENDS = [
 AUTH_LDAP_SERVER_URI = "ldap://192.168.11.4:389"
 
 AUTH_LDAP_BIND_DN = "CN=lister,OU=WsparcieUsers,OU=Users,OU=Vigo,DC=ad,DC=vigo,DC=com,DC=pl"
-AUTH_LDAP_BIND_PASSWORD = os.environ["AUTH_LDAP_BIND_PASSWORD"], #
+AUTH_LDAP_BIND_PASSWORD = os.environ["AUTH_LDAP_BIND_PASSWORD"]
 AUTH_LDAP_USER_SEARCH = LDAPSearch(
     "OU=Users,OU=Vigo,DC=ad,DC=vigo,DC=com,DC=pl", ldap.SCOPE_SUBTREE, "(sAMAccountName=%(user)s)"
 )
