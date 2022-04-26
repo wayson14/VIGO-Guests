@@ -15,7 +15,7 @@ from pathlib import Path
 import ldap
 from django_auth_ldap.config import LDAPSearch
 from django_auth_ldap.config import NestedActiveDirectoryGroupType
-
+import os
 import logging
 logger = logging.getLogger('django_auth_ldap')
 logger.addHandler(logging.StreamHandler())
@@ -28,7 +28,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-a1@u+((7+uk%e9^p69061#5lykrsleazjfewd2sp#6lk03p&wh'
+SECRET_KEY = os.environ["DJANGO_SECRET_KEY"],
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -94,7 +94,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'NAME': 'vigo_guests',
         'USER': 'postgres',
-        'PASSWORD': 'wLFaEwHIRCfWBTY9rU9gNsEIZ',
+        'PASSWORD': os.environ["DB_PASSWORD"], #'wLFaEwHIRCfWBTY9rU9gNsEIZ',
         'HOST': 'localhost',
         'PORT': '5432',
     }
@@ -140,7 +140,7 @@ AUTHENTICATION_BACKENDS = [
 AUTH_LDAP_SERVER_URI = "ldap://192.168.11.4:389"
 
 AUTH_LDAP_BIND_DN = "CN=lister,OU=WsparcieUsers,OU=Users,OU=Vigo,DC=ad,DC=vigo,DC=com,DC=pl"
-AUTH_LDAP_BIND_PASSWORD = "!Wsparcie5005"
+AUTH_LDAP_BIND_PASSWORD = os.environ["AUTH_LDAP_BIND_PASSWORD"], #
 AUTH_LDAP_USER_SEARCH = LDAPSearch(
     "OU=Users,OU=Vigo,DC=ad,DC=vigo,DC=com,DC=pl", ldap.SCOPE_SUBTREE, "(sAMAccountName=%(user)s)"
 )
