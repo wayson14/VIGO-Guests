@@ -9,6 +9,7 @@ export DJANGO_SECRET_KEY='django-insecure-a1@u+((7+uk%e9^p69061#5lykrsleazjfewd2
 export DB_PASSWORD="wLFaEwHIRCfWBTY9rU9gNsEIZ"
 export AUTH_LDAP_BIND_PASSWORD="!Wsparcie5005"
 
+pip install -r req.txt
 python ./manage.py makemigrations
 python ./manage.py migrate
 python ./manage.py runserver 0.0.0.0:8000
