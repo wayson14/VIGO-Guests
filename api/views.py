@@ -10,7 +10,7 @@ from django.shortcuts import get_object_or_404
 from datetime import datetime
 from django.http import JsonResponse
 from django.contrib.admin.views.decorators import staff_member_required
-
+from django.views.decorators.csrf import csrf_exempt
 from asgiref.sync import async_to_sync
 import channels.layers
 from channels.layers import get_channel_layer
@@ -60,7 +60,7 @@ class GuestEntryView(APIView):
         serializer = GuestEntrySerializer(guest_entries, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-    @user_passes_test(True)
+    @csrf_exempt
     def post(self, request, *args, **kwargs):
         '''
         Create the GuestEntry with given data
