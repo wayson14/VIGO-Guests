@@ -61,6 +61,7 @@ class GuestEntryView(APIView):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     @csrf_exempt
+    @staff_member_required
     def post(self, request, *args, **kwargs):
         '''
         Create the GuestEntry with given data
