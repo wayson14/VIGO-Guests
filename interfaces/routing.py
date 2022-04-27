@@ -3,5 +3,5 @@ from .consumers import WSConsumer
 
 
 ws_urlpatterns = [
-    path("wss/socket_connection/", WSConsumer.as_asgi())
+    path("ws/socket_connection/", WSConsumer.as_asgi())
 ]
