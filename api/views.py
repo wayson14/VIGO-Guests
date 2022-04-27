@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -60,7 +60,7 @@ class GuestEntryView(APIView):
         serializer = GuestEntrySerializer(guest_entries, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-    
+    @user_passes_test(True)
     def post(self, request, *args, **kwargs):
         '''
         Create the GuestEntry with given data
