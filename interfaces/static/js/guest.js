@@ -64,6 +64,7 @@ async function upload_data(form)
     formData.append("guest_last_name", guest_last_name.value);
     formData.append("keeper_full_name", keeper_full_name.value);
     formData.append("company", company.value);
+    formData.append("csrfmiddlewaretoken", csrftoken)
     const response = await fetch(endpoint,
          {
             method: "post",
