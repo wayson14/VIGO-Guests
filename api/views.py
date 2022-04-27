@@ -12,7 +12,9 @@ from django.http import JsonResponse
 from django.contrib.admin.views.decorators import staff_member_required
 
 from asgiref.sync import async_to_sync
+import channels.layers
 from channels.layers import get_channel_layer
+from asgiref.sync import async_to_sync
 
 from .models import Card, GuestEntry
 from .serializers import Card, CardSerializer, GuestEntrySerializer, CardGivingSerializer
@@ -63,18 +65,18 @@ class GuestEntryView(APIView):
         '''
         Create the GuestEntry with given data
         '''
-    
+        self.channel_layer = channels.layers.get_channel_layer()
         #send message to consumer 
-        async def send_prompt():
-            channel_layer = get_channel_layer()
-            await print('CHANNEL LAYER', channel_layer)
-            await channel_layer.send(
-                "stream",
-                {
-                    'type': 'message',
-                    'message': 'test'
-                }
-            )
+        # async def send_prompt():
+        #     channel_layer = channels.layers.get_channel_layer()
+        #     await print('CHANNEL LAYER', channel_layer)
+        #     await channel_layer.send(
+        #         "stream",
+        #         {
+        #             'type': 'message',
+        #             'message': 'test'
+        #         }
+        #     )
 
         # find card of specified id
         if request.data.get('enter_datetime') == None:
@@ -101,6 +103,17 @@ class GuestEntryView(APIView):
             else:
                 if not card.is_given:
                     serializer.save()
+                    
+                    ###
+                    async_to_sync(self.channel_layer.group_send)(
+                        'vigo_guests',
+                        {
+                            'type': 'chat_message',
+                            'message': 'adfs',
+                        }
+                    )
+                    ###
+
                     return Response(serializer.data, status=status.HTTP_201_CREATED)
                 else:
                     return Response(f'Card of id {card.id} is already given.', status=status.HTTP_400_BAD_REQUEST)

@@ -4,33 +4,46 @@ var avalible_cards = [];
 
 
 function connect() {
-    var ws = new WebSocket('ws://'+window.location.host+'/ws/socket_connection/');
-    ws.onopen = function() {
-      // subscribe to some channels
-    //   ws.send(JSON.stringify({
-    //       "message": "Connection established"
-    //       //.... some message the I must send when I connect ....
-    //   }));
+    socket = new WebSocket("ws://" + window.location.host + "/ws/socket_connection/");
+
+    socket.onopen = function(e) {
+        console.log("Successfully connected to the WebSocket.");
+    }
+
+    socket.onclose = function(e) {
+        console.log("WebSocket connection closed unexpectedly. Trying to reconnect in 2s...");
+        setTimeout(function() {
+            console.log("Reconnecting...");
+            connect();
+        }, 2000);
     };
-  
-    ws.onmessage = function(e) {
-      console.log('Message:', e.data);
+
+    socket.onmessage = function(e) {
+        const data = JSON.parse(e.data);
+        console.log(data);
+
+        switch (data.type) {
+            case "socket_message":
+                // chatLog.value += data.message + "\n";
+                if (data.message === 'Reload event'){
+                    refresh()
+                }
+                break;
+            default:
+                console.error("Unknown message type!");
+                break;
+        }
+
+        // scroll 'chatLog' to the bottom
+        // chatLog.scrollTop = chatLog.scrollHeight;
     };
-  
-    ws.onclose = function(e) {
-      console.log('Socket is closed. Reconnect will be attempted in 5 second.', e.reason);
-      setTimeout(function() {
-        connect();
-      }, 5000);
-    };
-  
-    ws.onerror = function(err) {
-      console.error('Socket encountered error: ', err.message, 'Closing socket');
-      ws.close();
-    };
-  }
-  
-  connect();
+
+    socket.onerror = function(err) {
+        console.log("WebSocket encountered an error: " + err.message);
+        console.log("Closing the socket.");
+        socket.close();
+    }
+}
 
 String.prototype.htmlEntities = function()
 {
@@ -39,6 +52,7 @@ String.prototype.htmlEntities = function()
 
 function start()
 {
+    connect()
     refresh()
 }
 

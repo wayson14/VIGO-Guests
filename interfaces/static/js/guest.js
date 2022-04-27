@@ -1,8 +1,50 @@
 window.onload = start;
 const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
 
+
+function connect() {
+    socket = new WebSocket("ws://" + window.location.host + "/ws/socket_connection/");
+
+    socket.onopen = function(e) {
+        console.log("Successfully connected to the WebSocket.");
+    }
+
+    socket.onclose = function(e) {
+        console.log("WebSocket connection closed unexpectedly. Trying to reconnect in 2s...");
+        setTimeout(function() {
+            console.log("Reconnecting...");
+            connect();
+        }, 2000);
+    };
+
+    socket.onmessage = function(e) {
+        const data = JSON.parse(e.data);
+        console.log(data);
+
+        switch (data.type) {
+            case "socket_message":
+                // chatLog.value += data.message + "\n";
+                break;
+            default:
+                console.error("Unknown message type!");
+                break;
+        }
+
+        // scroll 'chatLog' to the bottom
+        // chatLog.scrollTop = chatLog.scrollHeight;
+    };
+
+    socket.onerror = function(err) {
+        console.log("WebSocket encountered an error: " + err.message);
+        console.log("Closing the socket.");
+        socket.close();
+    }
+}
+
+
 function start()
 {
+    connect()
     let form = document.getElementById("add-form");
     form.addEventListener("submit", e => {e.preventDefault(); upload_data(form);});
 }
@@ -32,6 +74,9 @@ async function upload_data(form)
         ).catch(console.error);
     const data = await response.json()
     if (response.ok){
+        socket.send(JSON.stringify({
+            "message": "Reload event"
+        }))
         $( "#output" ).css({"color":"green"})
         output = "Pomyślnie zarejestrowano wizytę. Poczekaj na wydanie identyfikatora..."
         $( "#output" ).text(output);
