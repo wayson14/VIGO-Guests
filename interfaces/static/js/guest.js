@@ -3,7 +3,7 @@ const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
 
 
 function connect() {
-    socket = new WebSocket("ws://" + window.location.host + "/ws/socket_connection/");
+    socket = new WebSocket("wss://" + window.location.host + "/ws/socket_connection/");
 
     socket.onopen = function(e) {
         console.log("Successfully connected to the WebSocket.");
