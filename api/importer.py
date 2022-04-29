@@ -94,7 +94,7 @@ class Importer(APIView):
             serializer = GuestEntrySerializer(data = data)
             if serializer.is_valid():
                 serializer.save()
-            else: print("Row not valid - "+str(i))
+            else: print("Row not valid - "+str(i)+serializer.errors)
             if(i%100 == 0): print(f"{serializer.errors}Passed row "+str(i))
             i += 1
         print("Importing completed!")
