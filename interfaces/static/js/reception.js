@@ -54,7 +54,7 @@ function start()
 {
     connect();
     refresh();
-    switch_to_ang();
+    switch_to_pl();
 }
 
 

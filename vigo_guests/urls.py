@@ -17,10 +17,11 @@ from django.contrib import admin
 from django.urls import path, include
 from interfaces import views
 from api import urls as api_urls
-
+from interfaces.admin import interface_admin
 urlpatterns = [
     path('', views.panel),
-    path('admin/', admin.site.urls),
+    # path('admin/', admin.site.urls),
+    path('admin/', interface_admin.urls),
     path('logout/', views.logout_view),
     path('guest/', views.guest),
     path('reception/', views.reception),

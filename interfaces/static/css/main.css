@@ -13,6 +13,7 @@
 
 body
 {
+    box-sizing: content-box;
     background-color: var(--e-global-color-secondary);
     color: var(--e-global-color-text);
     font-size: 1rem;
@@ -20,7 +21,7 @@ body
 
 #topbar
 {
-    width: 100vw;
+    /* width: 100vw; */
     font-size: 30px;
     line-height: 1;
     padding: 10px;
@@ -320,3 +321,4 @@ footer
     display: flex;
     flex-direction: column;
 }
+

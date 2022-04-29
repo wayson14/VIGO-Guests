@@ -1,0 +1,32 @@
+:root
+{
+    --e-global-color-primary: #0058A8;
+    --e-global-color-secondary: #404040;
+    --e-global-color-text: #666666;
+    --e-global-color-accent: #2DC1F3;
+    --e-global-color-743c696: #FFFFFF;
+    --e-global-color-86ca2fe: #F8F9FA;
+    --e-global-color-27d3d5e: #F9F9F97D;
+    --e-global-color-ea6f3a4: #03055E;
+    font-size: 16px !important;
+}
+
+
+.login {
+    background-color: var(--e-global-color-86ca2fe) !important;
+    
+}
+.login #header {
+    background-color: var(--e-global-color-primary) !important;
+}
+.login #main {
+    background-color: var(--e-global-color-accent) !important;
+}
+.login .submit-row input {
+    background-color: var(--e-global-color-primary) !important;
+}
+
+.login .form-row input {
+    background-color: var(--e-global-color-86ca2fe) !important;
+    color: var(--e-global-color-text) !important;
+}
