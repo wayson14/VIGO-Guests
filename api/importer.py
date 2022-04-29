@@ -88,13 +88,14 @@ class Importer(APIView):
                 'enter_datetime': entry_datetime,
                 'exit_datetime': exit_datetime
             }
-            print('==============')
-            print(data)
-            print('==============')
+            
             serializer = GuestEntrySerializer(data = data)
             if serializer.is_valid():
                 serializer.save()
             else: 
+                print('==============')
+                print(data)
+                print('==============')
                 print("Row not valid - "+str(i))
                 print("ERRORS:", serializer.errors)
 
