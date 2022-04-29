@@ -223,7 +223,7 @@ function new_awaiting_entry(data)
             n.appendChild(c);                  // Put it back at its new position
         }
     }
-    select = reverse(select)
+    reverse(select)
 
     interactions.appendChild(select);
 
