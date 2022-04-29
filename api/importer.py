@@ -42,17 +42,14 @@ class Importer(APIView):
 
         # Read the active sheet:
         sheet = wb_obj.active
-        penalty = 0
         i = 2
-        for row in sheet.iter_rows(min_row=2, max_row=20000):
+        for row in sheet.iter_rows(min_row=2, max_row=1033):
             guest_full_name = row[1].value
             if not guest_full_name:
-                penalty += 1
                 guest_full_name = "Niewiadoma Bezimienna"
                 print("Niewiadoma Bezimienna at "+str(i))
             guest_full_name = guest_full_name.strip()
             if guest_full_name == "":
-                penalty +=1
                 guest_full_name = "Niewiadoma Bezimienna"
                 print("Niewiadoma Bezimienna at "+str(i))
             guest_full_name = guest_full_name.split(" ")
@@ -70,13 +67,11 @@ class Importer(APIView):
 
             entry_datetime = row[0].value
             if not isinstance(entry_datetime, datetime.datetime):
-                penalty +=1
                 entry_datetime = datetime.datetime(1970, 1, 1, 8, 21, 37)
                 print("Wrong datetime at "+str(i))
             
             exit_time = row[7].value
             if not isinstance(exit_time, datetime.time): 
-                penalty +=1
                 exit_time = datetime.time(18, 21, 37)
             exit_datetime = pytz.timezone('Poland').localize(datetime.datetime.combine(date=entry_datetime.date(), time=exit_time))
             exit_datetime = pytz.timezone('GMT').normalize(exit_datetime)
@@ -95,7 +90,7 @@ class Importer(APIView):
             }
             
             serializer = GuestEntrySerializer(data = data)
-            if serializer.is_valid() and penalty <4:
+            if serializer.is_valid():
                 serializer.save()
             else: 
                 print('==============')
@@ -107,5 +102,4 @@ class Importer(APIView):
             if(i%100 == 0): print(f"{serializer.errors}Passed row "+str(i))
             i += 1
         print("Importing completed!")
-        penalty = 0
         return Response(serializer.data, status=status.HTTP_200_OK)
