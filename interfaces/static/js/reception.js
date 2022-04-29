@@ -215,7 +215,15 @@ function new_awaiting_entry(data)
         select.appendChild(option);
     });
 
-    select = select.get.reverse()
+    function reverse(n) {          // Reverse the order of the children of Node n
+        var kids = n.childNodes;   // Get the list of children
+        var numkids = kids.length; // Figure out how many there are
+        for(var i = numkids-1; i >= 0; i--) {  // Loop through them backwards
+            var c = n.removeChild(kids[i]);    // Remove a child
+            n.appendChild(c);                  // Put it back at its new position
+        }
+    }
+    select = reverse(select)
 
     interactions.appendChild(select);
 
