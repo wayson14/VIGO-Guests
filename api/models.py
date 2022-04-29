@@ -4,11 +4,15 @@ from django.db import models
 class Card(models.Model):
     id              = models.IntegerField(primary_key=True, unique=True, null=False)
     is_given        = models.BooleanField(default=False)
+    class Meta:
+        ordering = ("id", "is_given")
     def __str__(self):
+        if self.id == -1 :
+            return " "
         if self.is_given:
-            return f"Card of ID: {self.id} GIVEN"
+            return f"{self.id} GIVEN"
         else:
-            return f"Card of ID: {self.id}"
+            return f"{self.id}"
 
 class GuestEntry(models.Model):
     guest_first_name = models.CharField(max_length=100, blank=False)
@@ -19,5 +23,9 @@ class GuestEntry(models.Model):
     keeper_full_name= models.CharField(max_length=100, null=True, blank=True)
     notes           = models.CharField(max_length=1000, null=True, blank=True)
     card            = models.ForeignKey(Card, null=True, on_delete=models.DO_NOTHING)
+    
+    
+    class Meta:
+        ordering = ("enter_datetime",)
     def __str__(self):
-        return f"{self.guest_first_name} {self.guest_last_name} z {self.company}"
+        return f"{self.guest_first_name} {self.guest_last_name} | {self.company} | {self.enter_datetime.strftime('%Y-%m-%d %H:%M')}"
