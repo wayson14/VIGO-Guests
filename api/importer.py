@@ -21,7 +21,7 @@ class Importer(APIView):
                 if occured.count(card.id) > 1:
                     return Response("one card occured multiple times inside a range")
         
-        i = -1
+        i = -2
         for i in range(51):
             if not i in occured:
                 card_object = {
