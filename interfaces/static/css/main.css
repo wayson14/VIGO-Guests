@@ -41,7 +41,7 @@ body
 #topbar a
 {
     display: block;
-    font-size: 1em;
+    font-size: 0.6em;
     height: 50px;
     line-height: 40px;
     position: absolute;
@@ -75,7 +75,37 @@ body
 {
     background-color: var(--e-global-color-743c696);
     min-height: 100vh;
-    padding-top: 100px;
+    padding-top: 10px;
+}
+
+#language
+{
+    margin-bottom: 100px;
+}
+
+#language button
+{
+    background-color: var(--e-global-color-primary);
+    color: var(--e-global-color-743c696);
+    border: none;
+    text-align: center;
+    transition: transform 0.3s;
+    font-weight: normal;
+}
+
+#language button:hover
+{
+    background-color: var(--e-global-color-accent);
+    transform: scale(0.9);
+    border: none;
+}
+
+#language button:focus
+{
+    background-color: var(--e-global-color-accent);
+    transform: scale(0.9);
+    border: none;
+    outline: none;
 }
 
 #awaiting
