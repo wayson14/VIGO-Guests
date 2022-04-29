@@ -44,7 +44,7 @@ class Importer(APIView):
         sheet = wb_obj.active
 
         i = 2
-        for row in sheet.iter_rows(min_row=2, max_row=9982):
+        for row in sheet.iter_rows(min_row=2, max_row=1000):
             guest_full_name = row[1].value
             if not guest_full_name:
                 guest_full_name = "Niewiadoma Bezimienna"
@@ -94,7 +94,10 @@ class Importer(APIView):
             serializer = GuestEntrySerializer(data = data)
             if serializer.is_valid():
                 serializer.save()
-            else: print("Row not valid - "+str(i)+serializer.errors)
+            else: 
+                print("Row not valid - "+str(i))
+                print("ERRORS:", serializer.errors)
+
             if(i%100 == 0): print(f"{serializer.errors}Passed row "+str(i))
             i += 1
         print("Importing completed!")
