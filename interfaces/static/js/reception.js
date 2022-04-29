@@ -1,6 +1,6 @@
 window.onload = start;
 const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
-var avalible_cards = [];
+var avaivable = [];
 
 
 function connect() {
@@ -130,10 +130,10 @@ async function load_awaitings()
     if(response == "")
     {
         initial_text = "<span style='color: red; font-weight: bold;'>Brak dostępnych kart do wydania.<br/>Dodaj więcej kart lub zwolnij te nieużywane.</span>";
-        avalible_cards = [];
+        avaivable = [];
     }
 
-    else avalible_cards = response;
+    else avaivable = response;
 
     endpoint = "/api/no_cards_guests";
     response = await get(endpoint, true);
@@ -201,7 +201,7 @@ function new_awaiting_entry(data)
 
     let div = document.createElement("div");
     let select = document.createElement("select");
-    avalible_cards.filter(card => {
+    avaivable.filter(card => {
         if (card.id !== 0 && card.id !== -1){
             return true
             }
@@ -214,6 +214,9 @@ function new_awaiting_entry(data)
         option.value = card.id;
         select.appendChild(option);
     });
+
+    select = select.reverse()
+
     interactions.appendChild(select);
 
     let button = document.createElement("button");
