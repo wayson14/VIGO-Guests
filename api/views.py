@@ -292,6 +292,7 @@ class FreeCards(StaffRequiredMixin, APIView):
         # cards = []
         c = Card.objects.filter(is_given = False)
         cards = list(c)
+        cards = cards.sort()
         # for entry in active_guest_entries:
         #     if entry.card != None:
         #         if entry.card.is_given == False:
