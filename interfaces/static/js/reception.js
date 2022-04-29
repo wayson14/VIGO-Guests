@@ -207,7 +207,7 @@ function new_awaiting_entry(data)
             }
         else return false
         }
-        ).sort((a, b) => {        return a - b
+        ).sort((b, a) => {        return a - b
     }).forEach(card => {
         let option = document.createElement("option");
         option.innerHTML = card.id;
