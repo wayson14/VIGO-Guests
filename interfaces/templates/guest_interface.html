@@ -38,11 +38,11 @@
                         <h2>Proszę podaj swoje dane:</h2>
                         <form id="add-form" method="post">
                             {% csrf_token %}
-                            <input type="text" name="guest_first_name" placeholder="Imię"/><br/>
-                            <input type="text" name="guest_last_name" placeholder="Nazwisko"/><br/>
-                            <input type="text" name="keeper_full_name" placeholder="Opiekun"/><br/>
-                            <input type="text" name="company" placeholder="Firma"/><br/>
-                            <input type="submit" name="submit" value="ZATWIERDŹ"/><br/>
+                            <input type="text" name="guest_first_name" placeholder="Imię" autocomplete="off"/><br/>
+                            <input type="text" name="guest_last_name" placeholder="Nazwisko" autocomplete="off"/><br/>
+                            <input type="text" name="keeper_full_name" placeholder="Opiekun" autocomplete="off"/><br/>
+                            <input type="text" name="company" placeholder="Firma" autocomplete="off"/><br/>
+                            <input type="submit" name="submit" value="ZATWIERDŹ" autocomplete="off"/><br/>
                         </form>
                         <div id="output">
                         </div>
