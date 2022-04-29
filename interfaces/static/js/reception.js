@@ -201,7 +201,13 @@ function new_awaiting_entry(data)
 
     let div = document.createElement("div");
     let select = document.createElement("select");
-    avalible_cards.filter(card => card.id !== -1).sort((a, b) => {        return a - b
+    avalible_cards.filter(card => {
+        if (card.id !== 0 && card.id !== -1){
+            return true
+            }
+        else return false
+        }
+        ).sort((a, b) => {        return a - b
     }).forEach(card => {
         let option = document.createElement("option");
         option.innerHTML = card.id;

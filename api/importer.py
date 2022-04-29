@@ -63,7 +63,7 @@ class Importer(APIView):
 
             card = row[4].value
             if card: card = int(card)
-            else: card = None
+            else: card = 0
 
             entry_datetime = row[0].value
             if not isinstance(entry_datetime, datetime.datetime):
