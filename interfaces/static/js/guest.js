@@ -136,7 +136,7 @@ function validate(guest_first_name, guest_last_name, keeper_full_name, company)
     }
     if(company.value == "")
     {
-        company.placeholder = "Frima jest wymagana";
+        company.placeholder = "Firma jest wymagana";
         company.className = "invaild";
         ok = false;
     }
