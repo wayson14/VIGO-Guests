@@ -43,7 +43,7 @@ class Importer(APIView):
         # Read the active sheet:
         sheet = wb_obj.active
         i = 2
-        for row in sheet.iter_rows(min_row=2, max_row=1033):
+        for row in sheet.iter_rows(min_row=2, max_row=10033):
             guest_full_name = row[1].value
             if not guest_full_name:
                 guest_full_name = "Niewiadoma Bezimienna"
