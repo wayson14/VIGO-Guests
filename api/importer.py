@@ -7,10 +7,11 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 import pytz
-
+from django.contrib.auth.decorators import user_passes_test
 
 class Importer(APIView):
 
+    @user_passes_test(lambda u: u.is_superuser)
     def get(self, request):
         cards = Card.objects.all()
         occured = []
