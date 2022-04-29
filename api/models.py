@@ -5,7 +5,7 @@ class Card(models.Model):
     id              = models.IntegerField(primary_key=True, unique=True, null=False)
     is_given        = models.BooleanField(default=False)
     class Meta:
-        ordering = ("-id", "is_given")
+        ordering = ("id", "is_given")
     def __str__(self):
         if self.id == -1 or self.id == 0 :
             return " "
