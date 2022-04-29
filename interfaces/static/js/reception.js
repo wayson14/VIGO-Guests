@@ -215,7 +215,7 @@ function new_awaiting_entry(data)
         select.appendChild(option);
     });
 
-    select = select.reverse()
+    select = select.get.reverse()
 
     interactions.appendChild(select);
 
