@@ -95,7 +95,7 @@ class Importer(APIView):
             }
             
             serializer = GuestEntrySerializer(data = data)
-            if serializer.is_valid() and penalty <3:
+            if serializer.is_valid() and penalty <4:
                 serializer.save()
             else: 
                 print('==============')
