@@ -95,7 +95,7 @@ async function upload_data(form)
         keeper_full_name.value = '',
         company.value = ''
         $( "#output" ).text('');
-    }, 5000)
+    }, 3000)
 }
 
 function validate(guest_first_name, guest_last_name, keeper_full_name, company)
