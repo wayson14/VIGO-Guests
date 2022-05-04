@@ -95,7 +95,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'NAME': 'vigo_guests',
         'USER': 'postgres',
-        'PASSWORD': os.environ["DB_PASSWORD"], #"wLFaEwHIRCfWBTY9rU9gNsEIZ",
+        'PASSWORD': os.environ["DB_PASSWORD"], 
         'HOST': 'localhost',
         'PORT': '5432',
     }
