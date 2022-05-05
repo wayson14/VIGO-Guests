@@ -2,12 +2,27 @@ window.onload = start;
 const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
 var avaivable = [];
 
-
+async function infoCloud(text, type){
+    if (type){
+        type = type
+    }
+    else type = 'info'
+    
+    const infoCloudObject = document.createElement("div");
+    infoCloudObject.className = "info-cloud";
+    infoCloudObject.innerText = text
+    if (type == 'error') infoCloudObject.style = "background: red";
+    document.body.appendChild(infoCloudObject);
+    setTimeout(() => {
+        document.body.removeChild(infoCloudObject)
+    }, 5000)
+}
 function connect() {
     socket = new WebSocket("wss://" + window.location.host + "/ws/socket_connection/");
 
     socket.onopen = function(e) {
         console.log("Successfully connected to the WebSocket.");
+        
     }
 
     socket.onclose = function(e) {
@@ -54,10 +69,83 @@ function start()
 {
     connect();
     refresh();
+    infoCloud('Aplikacja została załadowana poprawnie')
     switch_to_pl();
 }
 
+let pos = 0
+let posLimit = 6 //defines how long is the string to read
+let scanTimeout = false
+let scanInput = ''
+let prompted = false
+document.addEventListener('keydown', async function (e) {
+    if (!scanTimeout){
+        scanInput += e.key
+        pos ++
+        if (pos == posLimit){
+            scanTimeout = true
+            scannedID = parseScannerInput(scanInput)
+            card = await get('/api/cards/'+scannedID+'/')
+            console.log(card)
+            if (card.is_given){
+                let endpoint = "/api/active_guest_entries"
+                active_entries = await get(endpoint, true);
+                console.log(active_entries)
+                let holder = active_entries.filter(entry => {
+                    if (entry.card == card.id) return true
+                })[0]
+                console.log(holder.id)
+                release(holder.id, document.querySelector("#entry-"+`${holder.id}`).childNodes[1].firstElementChild.value)
+            }
+            else{
+                try{
+                    accept(awaitings_response[0].id, scannedID)
+                }
+                catch {
+                    infoCloud('Brak gości!', 'error')
+                }
+                
+            }
+            
+            setTimeout(() => {
+                scanTimeout = false
+                pos = 0
+                scanInput = ''
+                prompted = true
+            }, 3000)
+        }
+    }
+    else {
+        if (!prompted){
+            console.log('Zaczekaj ze skanem następnej karty')
+            prompted = true
+        }
+        
+    }
+})
 
+function parseScannerInput(data){
+    let pos = 0
+    let propper = true
+    let result = ''
+    while (propper == true){
+        if (isNaN(data[pos])){propper = false; break;} 
+        if (pos < 3){
+            if (data[pos] != 0){propper = false; break;}
+        }
+        if (pos == 5){
+            result = data[3]+data[4]+data[5]
+            break;
+        }
+        pos++
+    }
+    if (!propper){
+        result = 'Zeskanuj poprawny kod kreskowy karty!'
+    }
+    console.log(result)
+    infoCloud(result, 'error')
+    return result
+}
 function refresh()
 {
     load_awaitings();
@@ -91,7 +179,7 @@ function switch_to_pl()
     guest_last_name_string = "Nazwisko: ";
     keeper_full_name_string = "Opiekun: ";
     company_string = "Firma: ";
-    card_string = "Wybierz kartę: ";
+    card_string = "Karta: ";
     enter_datetime_string = "Data wejścia: ";
     accept_button_string = "ZATWIERDŹ";
     decline_button_string = "ODRZUĆ";
@@ -125,6 +213,7 @@ function switch_to_ang()
     notes_placeholder_string = "Notes and remarks about guest's visit"
 }
 
+var awaitings_response = []
 async function load_awaitings()
 {
     let endpoint = "/api/free_cards";
@@ -144,6 +233,7 @@ async function load_awaitings()
     let awaitings = document.getElementById("awaiting");
     awaitings.innerHTML = initial_text;
     response.forEach(entry => {
+        awaitings_response.push(entry)
         awaitings.appendChild(new_awaiting_entry(entry));
     });
 }
@@ -295,9 +385,24 @@ function new_active_entry(data)
     clearboth.style = "clear: both;";
     infos.appendChild(clearboth);
 
+
+    // data["card"]
+    let displayValue = ''
+    if (data["card"] > 99 & data["card"] < 200){
+        displayValue = `Zwykły gość ${data["card"]-100}`
+    }
+    else if (data["card"] > 199 & data["card"] < 300){
+        displayValue = `Pełny serwis ${data["card"]-200}`
+    }
+    else if (data["card"] > 699 & data["card"] < 800){
+        displayValue = `Administrator ${data["card"]-700}`
+    }
+    else{
+        displayValue = `ID poza systemem ${data["card"]}`
+    }
     info = document.createElement("div");
     info.className = "info";
-    info.innerHTML = card_string+data["card"];
+    info.innerHTML = card_string+displayValue;
     infos.appendChild(info);
 
     info = document.createElement("div");
@@ -328,11 +433,30 @@ function new_active_entry(data)
     return entry;
 }
 
-async function accept(id)
-{
-    let endpoint = "/api/guest_entries/"+id+"/give_card/"+document.querySelector("#entry-"+id+" select").value;
-    document.getElementById("awaiting").removeChild(document.querySelector("#entry-"+id));
+async function accept(id, ...card_id)
+{   
+    let endpoint = ''
+    // console.log(card_id[0])
+    if (card_id[0]){
+        final_card_id = card_id[0]
+        
+    } 
+    else{
+        final_card_id = document.querySelector("#entry-"+id+" select").value;
+        // endpoint = "/api/guest_entries/"+id+"/give_card/"+
+    }
+    endpoint = "/api/guest_entries/"+id+"/give_card/"+final_card_id;
+    try{
+        document.getElementById("awaiting").removeChild(document.querySelector("#entry-"+id));
+    }
+    catch{
+        infoCloud('Brak gości, którym można przydzielić kartę!', 'error')
+    }
+    
     response = await get(endpoint);
+    guest_entry = await get( "/api/guest_entries/"+id)
+    full_name = guest_entry.guest_first_name + " " + guest_entry.guest_last_name
+    infoCloud('Przydzielono identifikator: '+final_card_id+" dla "+full_name,'test')
     refresh();
 }
 
@@ -343,36 +467,27 @@ async function decline(id)
     response = await del(endpoint);
 }
 
+
 async function release(id, notes)
 {   
+
+    
     let entry_data = await get("/api/guest_entries/"+id)
     entry_data.notes = notes
+    let full_name = entry_data.guest_first_name + " " + entry_data.guest_last_name
     // delete entry_data.card
     entry_data = JSON.stringify(entry_data)
     
     put_response = await put("/api/guest_entries/"+id+"/", entry_data)
-    console.log(put_response)
+    // console.log(put_response)
 
     const close_endpoint = "/api/guest_entries/"+id+"/close_entry";
     document.getElementById("active").removeChild(document.querySelector("#entry-"+id));
-    close_response = await get(close_endpoint);
+    infoCloud('Pomyślnie zakończono wizytę gościa: '+full_name, 'test')
+    await get(close_endpoint);
     
-    console.log('close_response:', close_response)
+    // console.log('close_response:', close_response)
 
-    
-    // console.log(get_data)
-    // var form_data = new FormData();
-    // function getFormData(object) {
-    //     const formData = new FormData();
-    //     Object.keys(object).forEach(key => formData.append(key, object[key]));
-    //     return formData;
-    // }
-    // fd = getFormData(get_data)
-    // form_data.append("notes", notes)
-    // // get_data.notes = notes
-    // console.log(fd)
-    
-    
     
     refresh();
 }

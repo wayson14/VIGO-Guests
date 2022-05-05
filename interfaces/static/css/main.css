@@ -249,6 +249,9 @@ body
     display: inline-block;
 }
 
+/* #active {
+    min-height: 100px;
+} */
 .entry span
 {
     color: var(--e-global-color-86ca2fe);
@@ -366,3 +369,15 @@ footer
     gap: 1em;
 }
 
+.info-cloud {
+    background-color: #0058A8;
+    width: 100vw;
+    position: fixed;
+    top: 0;
+    left: 0;
+    padding: 10px;
+    opacity: 90%;
+    color: white;
+    text-align: center;
+    z-index: 5;
+}
