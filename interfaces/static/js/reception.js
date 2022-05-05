@@ -91,7 +91,7 @@ function switch_to_pl()
     guest_last_name_string = "Nazwisko: ";
     keeper_full_name_string = "Opiekun: ";
     company_string = "Firma: ";
-    card_string = "Numer karty: ";
+    card_string = "Wybierz kartę: ";
     enter_datetime_string = "Data wejścia: ";
     accept_button_string = "ZATWIERDŹ";
     decline_button_string = "ODRZUĆ";
@@ -114,7 +114,7 @@ function switch_to_ang()
     guest_last_name_string = "Last name: ";
     keeper_full_name_string = "Keeper: ";
     company_string = "Company: ";
-    card_string = "Card id: ";
+    card_string = "Card: ";
     enter_datetime_string = "Enter date: ";
     accept_button_string = "ACCEPT";
     decline_button_string = "DECLINE";
@@ -205,15 +205,28 @@ function new_awaiting_entry(data)
     let div = document.createElement("div");
     let select = document.createElement("select");
     avaivable.filter(card => {
-        if (card.id !== 0 && card.id !== -1){
+        if (card.id !== 0 && card.id !== -1 && card.id > 99){
             return true
             }
         else return false
         }
-        ).sort((b, a) => {        return a - b
+        ).sort((a, b) => {        return a - b
     }).forEach(card => {
         let option = document.createElement("option");
-        option.innerHTML = card.id;
+        let displayValue = ''
+        if (card.id > 99 & card.id < 200){
+            displayValue = `Zwykły gość ${card.id-100}`
+        }
+        else if (card.id > 199 & card.id < 300){
+            displayValue = `Pełny serwis ${card.id-200}`
+        }
+        else if (card.id > 699 & card.id < 800){
+            displayValue = `Administrator ${card.id-700}`
+        }
+        else{
+            displayValue = `ID poza systemem ${card.id}`
+        }
+        option.innerHTML = displayValue;
         option.value = card.id;
         select.appendChild(option);
     });

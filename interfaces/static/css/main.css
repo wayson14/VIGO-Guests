@@ -262,10 +262,10 @@ body
     padding: 0.25em 0.5em;
     margin: 0;
     cursor: pointer;
-    line-height: 1.1;
+    /* line-height: 1.1; */
     outline: none;
     display: inline-block;
-    width: 50px;
+    width: 200px;
     border: none;
     background-color: var(--e-global-color-accent);
     border-radius: 0.5em;
@@ -282,8 +282,8 @@ body
 .entry select:focus
 {
     border: none;
-    border-bottom-left-radius: 0;
-    border-bottom-right-radius: 0;
+    /* border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0; */
 }
 
 select::after
@@ -301,6 +301,7 @@ select::after
 .entry select option
 {
     background-color: var(--e-global-color-accent);
+    padding: 10px;
 }
 
 .entry select option:hover

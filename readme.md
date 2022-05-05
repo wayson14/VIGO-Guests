@@ -28,3 +28,8 @@ Po zakończeniu wizyty, recepcja kończy wejście przyciskiem "zwolnij". W tym m
 Do działania aplikacji należy uruchomić skrypt *vigo-guests-full-reload-prod.sh* znajdujący się w folderze domowym usera sysadmin. 
 
 W folderach *~/VIGO-Guests/django-scripts, git-scirpts* znajdują się skrypty automatyzujące proces aktualizowania i przeładowania aplikacji. Są one umieszczone w repozytorium projektu, ponieważ są specyficzne dla aplikacji. Skrypt */django-scripts/prod-full-start.sh* nie jest śledzony przez gita i jest on specyficzny dla środowiska. Można go łatwo odtworzyć modyfikując plik **template-prod-full-start.sh**.
+
+### Kody dla różnych typów kart:
+<100, 199> zwykły gość
+<200, 299> pełny serwis
+<700, 799> administrator
