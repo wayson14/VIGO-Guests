@@ -76,6 +76,7 @@ var release_button_string = "";
 var error_unauthorized_string = "";
 var error_unknown_string = "";
 var operation_successful_string = "";
+var notes_placeholder_string = "";
 
 
 function switch_to_pl()
@@ -98,6 +99,7 @@ function switch_to_pl()
     error_unauthorized_string = "403 Nieautoryzowany - spróbuj się ponownie zalogować do interfejsu recepcji.";
     error_unknown_string = "Wystąpił nieznany błąd. Skontaktuj się z administratorami.";
     operation_successful_string = "Operacja wykonana pomyślnie";
+    notes_placeholder_string = "Dodaj notatki i uwagi do wizyty"
 }
 
 function switch_to_ang()
@@ -120,6 +122,7 @@ function switch_to_ang()
     error_unauthorized_string = "403 Unauthorized - try to re-log to reception interface.";
     error_unknown_string = "Unknown error occured. Please conntact administration.";
     operation_successful_string = "Operation executed successfuly";
+    notes_placeholder_string = "Notes and remarks about guest's visit"
 }
 
 async function load_awaitings()
@@ -294,8 +297,16 @@ function new_active_entry(data)
     let interactions = document.createElement("div");
     interactions.className = "interactions col-12 col-lg-4";
 
+    const notes = document.createElement("input");
+    notes.type = "text"
+    notes.style.width = "calc(100% - 250px)"
+    notes.style.float = "left"
+    notes.style.marginTop = "15px"
+    notes.style.textAlign = "center"
+    notes.placeholder = notes_placeholder_string
+    interactions.appendChild(notes)
     let button = document.createElement("button");
-    button.addEventListener("click", function(){release(data["id"]);});
+    button.addEventListener("click", function(){release(data["id"], notes.value);});
     button.innerHTML = release_button_string;
     interactions.appendChild(button);
 
@@ -319,11 +330,37 @@ async function decline(id)
     response = await del(endpoint);
 }
 
-async function release(id)
-{
-    let endpoint = "/api/guest_entries/"+id+"/close_entry";
+async function release(id, notes)
+{   
+    let entry_data = await get("/api/guest_entries/"+id)
+    entry_data.notes = notes
+    // delete entry_data.card
+    entry_data = JSON.stringify(entry_data)
+    
+    put_response = await put("/api/guest_entries/"+id+"/", entry_data)
+    console.log(put_response)
+
+    const close_endpoint = "/api/guest_entries/"+id+"/close_entry";
     document.getElementById("active").removeChild(document.querySelector("#entry-"+id));
-    response = await get(endpoint);
+    close_response = await get(close_endpoint);
+    
+    console.log('close_response:', close_response)
+
+    
+    // console.log(get_data)
+    // var form_data = new FormData();
+    // function getFormData(object) {
+    //     const formData = new FormData();
+    //     Object.keys(object).forEach(key => formData.append(key, object[key]));
+    //     return formData;
+    // }
+    // fd = getFormData(get_data)
+    // form_data.append("notes", notes)
+    // // get_data.notes = notes
+    // console.log(fd)
+    
+    
+    
     refresh();
 }
 
@@ -334,6 +371,41 @@ async function get(endpoint, quiet=false)
            method: "get",
            headers: {'X-CSRFToken': csrftoken},
            mode: 'same-origin',
+       }
+       ).catch(console.error);
+    if(!quiet)
+    {
+        if (response.ok){
+            $( "#output" ).css({"color":"green"})
+            output = operation_successful_string
+            $( "#output" ).text(output);
+        }
+        else{
+            $( "#output" ).css({"color":"red"})
+            if (response.status == 403){
+                $( "#output" ).text(error_unauthorized_string);
+            }
+            $( "#output" ).text(error_unknown_string);
+        }
+        setTimeout(() => {
+            $("#output").text('');
+        }, 5000);
+    }
+    if(response.ok)
+    {
+        return await response.json();
+    }
+   else return "";
+}
+
+async function put(endpoint, payload, quiet=false)
+{
+    const response = await fetch(endpoint,
+        {
+           method: "put",
+           headers: {'X-CSRFToken': csrftoken, 'content-type': 'application/json'},
+           mode: 'same-origin',
+           body: payload,
        }
        ).catch(console.error);
     if(!quiet)

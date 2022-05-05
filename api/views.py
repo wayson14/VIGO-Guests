@@ -229,7 +229,8 @@ class GuestEntryDetailView(StaffRequiredMixin, APIView):
                 serializer.save()
                 return Response(serializer.data, status=status.HTTP_201_CREATED)
             else:
-                if not card.is_given:
+                print(guest_entry.card.id == int(request.data.get('card')))
+                if (not card.is_given) or request.data.get('card') == guest_entry.card.id:
                     serializer.save()
                     return Response(serializer.data, status=status.HTTP_201_CREATED)
                 else:
