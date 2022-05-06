@@ -72,29 +72,49 @@ function start()
     infoCloud('Aplikacja została załadowana poprawnie')
     switch_to_pl();
 }
-
 let pos = 0
 let posLimit = 6 //defines how long is the string to read
 let scanTimeout = false
 let scanInput = ''
 let prompted = false
 document.addEventListener('keydown', async function (e) {
+    let bars = [document.getElementsByClassName("inputBar")]
+    console.log(bars)
+    console.log
+    bars = bars.filter(bar => {
+        return bar[0] === document.activeElement
+    })
+    console.log(bars)
+    if (bars.length > 0){
+        console.log('aborting listener')
+        return
+    }
+    console.log('continuing')
     if (!scanTimeout){
         scanInput += e.key
         pos ++
         if (pos == posLimit){
             scanTimeout = true
             scannedID = parseScannerInput(scanInput)
+            if (scannedID == 'Zeskanuj poprawny kod kreskowy karty!'){
+                setTimeout(() => {
+                    scanTimeout = false
+                    pos = 0
+                    scanInput = ''
+                    prompted = true
+                }, 3000)
+                return scannedID
+            }
             card = await get('/api/cards/'+scannedID+'/')
-            console.log(card)
+            // console.log(card)
             if (card.is_given){
                 let endpoint = "/api/active_guest_entries"
                 active_entries = await get(endpoint, true);
-                console.log(active_entries)
+                // console.log(active_entries)
                 let holder = active_entries.filter(entry => {
                     if (entry.card == card.id) return true
                 })[0]
-                console.log(holder.id)
+                // console.log(holder.id)
                 release(holder.id, document.querySelector("#entry-"+`${holder.id}`).childNodes[1].firstElementChild.value)
             }
             else{
@@ -416,6 +436,7 @@ function new_active_entry(data)
     interactions.className = "interactions col-12 col-lg-4";
 
     const notes = document.createElement("input");
+    notes.className = "inputBar"
     notes.type = "text"
     notes.style.width = "calc(100% - 250px)"
     notes.style.float = "left"
