@@ -295,7 +295,7 @@ function new_awaiting_entry(data)
     let div = document.createElement("div");
     let select = document.createElement("select");
     avaivable.filter(card => {
-        if (card.id !== 0 && card.id !== -1 && card.id > 99){
+        if (card.id !== 0 && card.id !== -1 /*&& card.id > 99*/){
             return true
             }
         else return false
@@ -314,7 +314,7 @@ function new_awaiting_entry(data)
             displayValue = `Administrator ${card.id-700}`
         }
         else{
-            displayValue = `ID poza systemem ${card.id}`
+            displayValue = `ID ${card.id}`
         }
         option.innerHTML = displayValue;
         option.value = card.id;
@@ -398,7 +398,7 @@ function new_active_entry(data)
         displayValue = `Administrator ${data["card"]-700}`
     }
     else{
-        displayValue = `ID poza systemem ${data["card"]}`
+        displayValue = `ID ${data["card"]}`
     }
     info = document.createElement("div");
     info.className = "info";
